@@ -26,12 +26,11 @@ def imprimir_tabla(nodos,simbolos):
 	linea = "|       |"
 	i = 0
 	for i in range(0,len(simbolos)):
-		linea += ("  "+simbolos[i]+"  |")
-	linea +=("  E  |")
+		linea += ("	"+simbolos[i]+"	|")
+	linea +=("	E	|")
 	separacion = ""
 	i = 0
-	for i in range(0,len(linea)):
-		separacion += "-"
+	
 	print(separacion)
 	print(linea)
 	print(separacion)
@@ -52,8 +51,8 @@ def imprimir_tabla(nodos,simbolos):
 		linea +=str(nodos[j].numero)+"  |"
 		i = 0
 		for i in range(0,len(simbolos)):
-			linea += ("  "+",".join(nodos[j].siguiente(simbolos[i],nodos))+"  |")
-		linea += ("  "+",".join(nodos[j].siguiente('E',nodos))+"  |")
+			linea += ("	"+",".join(nodos[j].siguiente(simbolos[i],nodos))+"	|")
+		linea += ("	"+",".join(nodos[j].siguiente('E',nodos))+"	|")
 		print(linea)
 		print(separacion)
 
