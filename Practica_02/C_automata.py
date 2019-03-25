@@ -14,12 +14,12 @@ class Estado:
 		temp = [simbolo,siguiente]
 		self.transiciones.append(temp)
 
-	def siguiente(self,simbolo):
+	def siguiente(self,simbolo,nodos):
 		i = 0
-		estado = -1
+		estado = []
 		for i in range(0,len(self.transiciones)):
 			if self.transiciones[i][0] == simbolo:
-				estado = self.transiciones[i][1]
+				estado = estado + [str(nodos[self.transiciones[i][1]].numero)]
 		return estado
 
 def imprimir_tabla(nodos,simbolos):
@@ -27,6 +27,7 @@ def imprimir_tabla(nodos,simbolos):
 	i = 0
 	for i in range(0,len(simbolos)):
 		linea += ("  "+simbolos[i]+"  |")
+	linea +=("  E  |")
 	separacion = ""
 	i = 0
 	for i in range(0,len(linea)):
@@ -51,10 +52,8 @@ def imprimir_tabla(nodos,simbolos):
 		linea +=str(nodos[j].numero)+"  |"
 		i = 0
 		for i in range(0,len(simbolos)):
-			if nodos[nodos[j].siguiente(simbolos[i])].numero != -1:
-				linea += ("  "+str(nodos[nodos[j].siguiente(simbolos[i])].numero)+"  |")
-			else:
-				linea += (" "+str(nodos[nodos[j].siguiente(simbolos[i])].numero)+"  |")
+			linea += ("  "+",".join(nodos[j].siguiente(simbolos[i],nodos))+"  |")
+		linea += ("  "+",".join(nodos[j].siguiente('E',nodos))+"  |")
 		print(linea)
 		print(separacion)
 
