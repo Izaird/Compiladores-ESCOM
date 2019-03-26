@@ -1,9 +1,5 @@
-#Clase que guarda los metodos de un estado
+#Clase para crear los estados 
 class Estado:
-	numero = 0
-	inicial = False
-	final = False
-
 	def __init__(self,numero,inicial,final):
 		self.numero = numero
 		self.inicial = inicial
@@ -21,13 +17,13 @@ class Estado:
 			if self.transiciones[i][0] == simbolo:
 				estado = estado + [str(nodos[self.transiciones[i][1]].numero)]
 		return estado
-
+#Imprime la tabla con las transiciones
 def imprimir_tabla(nodos,simbolos):
 	linea = "|       |"
 	i = 0
 	for i in range(0,len(simbolos)):
 		linea += ("	"+simbolos[i]+"	|")
-	linea +=("	E	|")
+	linea +=("	ε	|")
 	separacion = ""
 	i = 0
 	
@@ -56,6 +52,7 @@ def imprimir_tabla(nodos,simbolos):
 		print(linea)
 		print(separacion)
 
+#Completa los simbolos que faltan para hacer las trancisiones
 def completar(simbolos,actuales):
 	aux = []
 	i = 0

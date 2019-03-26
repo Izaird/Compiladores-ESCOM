@@ -1,6 +1,5 @@
-import C_automata
-import Verificar
-
+from Automata import *
+from Verificar import *
 #Crea tuplas que guardan las transiciones del archivo
 def tres(transiciones):
 	temp = []
@@ -73,29 +72,29 @@ for i in range(0,len(estados)):
 		primero = True
 	if estados[i] in final:
 		ultimo = True
-	nodos.append(C_automata.Estado(estados[i],primero,ultimo))
+	nodos.append(Estado(estados[i],primero,ultimo))
 
 i = 0
 for i in range(0,len(transiciones)):
-	temp = C_automata.posicion(nodos,transiciones[i][0])
+	temp = posicion(nodos,transiciones[i][0])
 	if temp != -1:
-		temp2 = C_automata.posicion(nodos,transiciones[i][2])
+		temp2 = posicion(nodos,transiciones[i][2])
 		if temp2 != -1:
 			nodos[temp].agregar_transicion(transiciones[i][1],temp2)
 
 i = 0
 for i in range(0,len(nodos)):
-	temp = C_automata.completar(simbolos,C_automata.simbolos_transitivos(nodos[i],simbolos))
+	temp = completar(simbolos,simbolos_transitivos(nodos[i],simbolos))
 	j = 0
 	for j in range(0,len(temp)):
 		nodos[i].agregar_transicion(temp[j],estados.index(-1))
-C_automata.imprimir_tabla(nodos,simbolos)
+imprimir_tabla(nodos,simbolos)
 
 while True:
 	cadena = input("Ingrese la cadena que desea validar: ")
 	i = 0
 	validos = []
-	Verificar.recorre(nodos,simbolos,C_automata.posicion(nodos,inicial[0]),cadena,[],cadena,validos)
+	recorre(nodos,simbolos,posicion(nodos,inicial[0]),cadena,[],cadena,validos)
 	if len(validos) == 0:
 		print("\033[1;31m"+"Cadena no valida"+"\033[0;m")
-	print(validos)
+	# print(validos)
