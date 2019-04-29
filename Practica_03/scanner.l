@@ -3,30 +3,56 @@
 
 %{
 /* se necesita esto para la llamada a atof() más abajo */
-#include <math.h>
+// #include <math.h>
 %}
 
-DIGITO   [0-9]
-ID       [-_a-zA-Z][a-z0-9A-Z]*
+Digito          [0-9]
+Id              [_a-zA-Z][-_a-z0-9A-Z]*
+Decimales       [.][0-9]*
+Suma            [0-9]+[+][0-9]+
+Resta           [0-9]+[-][0-9]+
+Division        [0-9]+[/][0-9]+
+Multiplicacion  [0-9]+[*][0-9]+
 
 %%
 
-{DIGITO}+   {
-            printf( "Un entero: %s (%d)\n", yytext,
-                    atoi( yytext ) );
-            }
-
-{DIGITO}+"."{DIGITO}*      {
-            printf( "Un real: %s (%g)\n", yytext,
-                    atof( yytext ) );
+"+"?{Digito}+   {
+            printf( "Un entero positivo: %s \n", yytext);
             }
 
 
-if|then|begin|end|procedure|function|clear       {
-            printf( "Una palabra clave: %s\n", yytext );
+"-"{Digito}+   {
+            printf( "Un entero negativo: %s\n", yytext);
             }
 
-{ID}        printf( "Un identificador: %s\n", yytext );
+"+"?{Digito}+{Decimales}*    {
+            printf( "Decimal positivo: %s\n", yytext);
+            }
+
+"-"+{Digito}+{Decimales}*       {
+            printf( "Decimal negativo: %s\n", yytext);
+            }
+
+"+"?"-"?{Digito}+{Decimales}*"^""+"?{Digito}+   {
+            printf( "Potencia positiva: %s\n", yytext);
+            }
+
+"+"?"-"?{Digito}+{Decimales}*"^""-"{Digito}+   {
+            printf( "Potencia negativa: %s\n", yytext);
+            }
+
+
+{Id}        printf( "Un identificador: %s\n", yytext );
+{Suma}        printf( "Una suma: %s\n", yytext );
+{Resta}        printf( "Una resta: %s\n", yytext );
+{Division}        printf( "Una division: %s\n", yytext );
+{Multiplicacion}        printf( "Una multiplicacion: %s\n", yytext );
+
+"MOD("{Digito}+")" {
+            printf( "Operacion mod: %s \n", yytext);
+            }
+
+
 
 "+"|"-"|"*"|"/"   printf( "Un operador: %s\n", yytext );
 
