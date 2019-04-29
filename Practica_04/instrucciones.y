@@ -5,8 +5,8 @@
 
 %union
 {double p;}
-%token <p> num
-
+%token<p>num
+%token SIN COS TAN LOG SQRT
 
 %left '+''-'
 %left '*''/'
@@ -23,14 +23,18 @@ exp	:	 exp'+'exp			{$$=$1+$3;}
 		|exp'*'exp			{$$=$1*$3;}
 		|exp'/'exp			{
 							if($3==0){
-								prinft("No se puede divir entre 0");
+								printf("No se puede divir entre 0");
 							}
 							else $$=$1/$3;
 						}
 		|'-'exp				{$$=-$2;}
-		|num;
+		|SIN'('exp')'			{$$=sin($3);}
+		|COS'('exp')'			{$$=cos($3);}
+		|TAN'('exp')'			{$$=tan($3);}
+		|LOG'('exp')'			{$$=log($3);}
+		|SQRT'('exp')'			{$$=sqrt($3);}
 		|'(' exp ')'			{$$=$2;}
-
+		|num;
 %%
 
 
@@ -43,5 +47,5 @@ main(){
 
 
 yyerror(char *s;){
-	prinft("Syntax ERROR");
+	printf("Syntax ERROR");
 }
