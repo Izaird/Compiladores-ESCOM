@@ -1,51 +1,35 @@
+/* calc.y */
 %{
-	#include<stdio.h>
-	#include<math.h>
+#define YYSTYPE double /* redefine el tipo de yylval */
+extern YYSTYPE yylval;
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
 %}
-
-%union
-{double p;}
-%token<p>num
-%token SIN COS TAN LOG SQRT
-
-%left '+''-'
-%left '*''/'
-%nonassoc uminu
-%type<p>exp
-
+%token NUMERO
+%left '+' '-'
+%left '*' '/'
+%left NEG
+%right '~'
+%start prog
 %%
-
-ss : exp {printf("La respuesta es:%g\n",$1);}
-
-
-exp	:	 exp'+'exp			{$$=$1+$3;}
-    		|exp'-'exp			{$$=$1-$3;}
-		|exp'*'exp			{$$=$1*$3;}
-		|exp'/'exp			{
-							if($3==0){
-								printf("No se puede divir entre 0");
-							}
-							else $$=$1/$3;
-						}
-		|'-'exp				{$$=-$2;}
-		|SIN'('exp')'			{$$=sin($3);}
-		|COS'('exp')'			{$$=cos($3);}
-		|TAN'('exp')'			{$$=tan($3);}
-		|LOG'('exp')'			{$$=log($3);}
-		|SQRT'('exp')'			{$$=sqrt($3);}
-		|'(' exp ')'			{$$=$2;}
-		|num;
+prog: /* Vacio */
+| prog expr '\n' { printf("Resultado: %f\n",$2); }
+;
+expr: NUMERO { $$=$1; }
+| expr '+' expr { $$=$1+$3; }
+| expr '-' expr { $$=$1-$3; }
+| expr '*' expr { $$=$1*$3; }
+| expr '/' expr { $$=$1/$3; }
+| '-' expr %prec NEG { $$=-$2; }
+| expr '~' expr { $$=pow($1,$3); }
+| '(' expr ')' { $$=$2; }
+;
 %%
-
-
-main(){
-	do{
-		printf("\nIntroduzca la expresion:");
-		yyparse();
-	}while(1);
+int yyerror(char *msje) {
+printf("%s\n",msje);
 }
-
-
-yyerror(char *s;){
-	printf("Syntax ERROR");
+int main(void) {
+yyparse();
+return 0;
 }
