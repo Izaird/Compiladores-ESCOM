@@ -1,22 +1,65 @@
-/* calc.l */
 %{
-#define YYSTYPE double /* redefine el tipo de yylval a flotante */
-extern YYSTYPE yylval;
-#include "y.tab.h" /* Archivo de cabecera es creado por yacc */
-#include <stdlib.h>
+#include "y.tab.h"
+#include <stdio.h>
 %}
-entero [0-9]+
-cadena [A-Za-z]+
-exponente [eE][+-]?{entero}
-real {entero}("."{entero})?{exponente}?
+
+Entero [0-9]+
+Flotante [0-9]+.[0-9]+
 %%
-[ \t]+ ; /* Se ignoran los caracteres en blanco */
-{real} { yylval=atof(yytext); return(NUMERO); }
-{cadena} {yylval = }
-[-+*/~()\n] return(*yytext);
-. yyerror("caracter invalido\n");
+
+{Entero}             {
+		printf("Numero entero %s\n",yytext);
+                yylval.entero = atoi(yytext);
+                return (ENTERO);
+                }
+
+{Flotante}    {
+		printf("Numero flotante %s\n",yytext);
+                yylval.flotante = atof(yytext);
+                return (FLOTANTE);
+                }
+
+
+"+"	 	{
+		printf("Signo suma\n");
+                return (yytext[0]);
+                }
+
+"-"	 	{
+		printf("Signo resta\n");
+                return (yytext[0]);
+                }
+
+"*"	 	{
+		printf("Signo mult\n");
+                return (yytext[0]);
+                }
+
+
+"/"	 	{
+		printf("Signo div\n");
+                return (yytext[0]);
+                }
+
+\"([^"]*)\"       {
+                int i = 0;
+		char *str = NULL;
+                str = (char *) malloc(yyleng-1);
+                yylval.string = str;
+                yytext++;
+                for(i = 0; i < yyleng-2; i++){
+                    *str = *yytext;
+                    str++;
+                    yytext++;
+                }
+                *str = '\0';
+                printf("Cadena: %s\n", yylval.string);
+                return(CADENA);
+                }
+"d"+"dd"
+"\n"            {
+		printf("Salto de linea\n");
+                return (yytext[0]);
+                }
 %%
-int yywrap(void)
-{
-return 1;
-}
+
