@@ -3,19 +3,18 @@
 #include <stdio.h>
 %}
 
-Entero [0-9]+
-Flotante [0-9]+.[0-9]+
+NUM [0-9]+
 %%
 
-{Entero}             {
+{NUM}             {
 		printf("Numero entero %s\n",yytext);
                 yylval.entero = atoi(yytext);
                 return (ENTERO);
                 }
 
-{Flotante}    {
-		printf("Numero flotante %s\n",yytext);
-                yylval.flotante = atof(yytext);
+({NUM})(".")({NUM})    {
+		printf("Numero entero %s\n",yytext);
+                yylval.flotante = strtof(yytext, NULL);
                 return (FLOTANTE);
                 }
 
