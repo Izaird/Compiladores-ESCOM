@@ -1,58 +1,34 @@
 %{
-
-/*
-
- * Sample lexical analyzer for a simple calculator.
-
- * 
-
- */
-
 #include <stdio.h>
-
 #include <unistd.h>
-
 #include <stdlib.h>
-
 #include <math.h>
-
 #define YYSTYPE double
-
 #include "y.tab.h"
 
-
-
-extern int lineno;        /* current line number  */
-
-extern YYSTYPE yylval;    /* value of numeric token */
-
-
-
+extern int lineno;        /* Actual numero de linea  */
+extern YYSTYPE yylval;    /* Valor numerico del token */
 %}
 
 
 
-      digit [0-9]
-
-space [ \t]
-
+numero [0-9]
+espacio [ \t]
+potencia [pP][Oo][Ww]
 
 
 %%
 
-{space}         { ; }    /* spaces are ignored */
+{espacio}         { ; }    /* espacios son ignorados */
 
 
 
-{digit}+\.?|{digit}*\.{digit}+ { 
-
+{numero}+\.?|{numero}*\.{numero}+ { 
                    yylval = strtod(yytext,0); 
-
                    return NUMBER; }
 
 
-
-\*\*            { return '^';  }
+{potencia}      { return POW;  }
 
 last            { return LAST; }
 
@@ -67,15 +43,12 @@ sqrt            { return SQRT; }
 tan             { return TAN;  }
 
 pi              { yylval = atan(1.0)*4; 
-
                   return NUMBER; }
 
 e               { yylval = exp(1.0);    
-
                   return NUMBER; }
 
-\n              { lineno++; return '\n'; }
-
+\n              { lineno++; return '\n'; } //Se va incrementando cada salto de linea
 
 
 .               { return yytext[0]; }
