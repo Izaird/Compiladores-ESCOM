@@ -4,7 +4,6 @@
 %}
 
 NUM [0-9]+
-POTENCIA [Pp][Oo][Ww]
 %%
 
 {NUM}             {
@@ -19,10 +18,6 @@ POTENCIA [Pp][Oo][Ww]
                 return (FLOTANTE);
                 }
 
-{POTENCIA}   {
-		printf("Potencia %s\n",yytext);
-                return (POW);
-                }
 
 "+"	 	{
 		printf("Signo suma\n");

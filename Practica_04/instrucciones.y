@@ -18,7 +18,6 @@ char* stringconcat( char *s1,  char *s2);
 %type <flotante> expf
 %token <string> CADENA
 %type <string> exp_str
-%token POW
 %left '+' '-'
 %left '*' "/"
              
@@ -41,7 +40,6 @@ exp:     ENTERO	{ $$ = $1; }
   | exp '*' exp                     { $$ = $1 * $3;	} 
   |'-'exp                           {$$ = -$2;} 
   |'('exp')'                        {$$ = $2;} 
-  | POW"("exp","exp")"           {$$ = pow($3,$5);}
 ;
 
 expf:   FLOTANTE {$$ = $1;}
