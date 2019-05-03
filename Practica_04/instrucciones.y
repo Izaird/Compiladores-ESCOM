@@ -1,7 +1,8 @@
 %{
-
 #include <stdio.h>
 #include <math.h>
+#include <stdio.h>
+#include <string.h>
 #define YYSTYPE double
 YYSTYPE last_value = 0;
 
@@ -12,8 +13,17 @@ extern int yylex(void);
 //-----------------------------------------------------------------------------------------
 //Definimos los tokens producidos por yylex() 
 //-----------------------------------------------------------------------------------------
-
-%token NUMBER
+%union{
+	int entero;
+  float flotante;
+  char* string;
+}
+%token <entero> ENTERO
+%type <entero> exp term
+%token <flotante> FLOTANTE
+%type <flotante> expf
+%token <string> CADENA
+%type <string> exp_str
 %token LAST
 %left '+' '-'
 %left '*' '/'
@@ -34,7 +44,7 @@ extern int yylex(void);
 list:
 
     |    list '\n'
-    |    list expr '\n'           { printf("%.8g\n",last_value=$2);}
+    |    list exp '\n'           { printf("%.8g\n",last_value=$2);}
     ; 
 //-----------------------------------------------------------------------------------------
 //Las expresiones son definidas recursivamente como cadenas de terminos
@@ -42,12 +52,12 @@ list:
 //-----------------------------------------------------------------------------------------
 
 
-    expr:     term                        { $$ = $1;         }
-    |     expr '+' expr                   { $$ = $1 + $3;    }
-    |     expr '-' expr                   { $$ = $1 - $3;    }
-    |     expr '*' expr                   { $$ = $1 * $3;    }
-    |     expr '/' expr                   { $$ = $1 / $3;    }
-    |     '-' expr  %prec NEGATIVE        { $$ = - $2;       }
+    exp:     term                        { $$ = $1;         }
+    |     exp '+' exp                   { $$ = $1 + $3;    }
+    |     exp '-' exp                   { $$ = $1 - $3;    }
+    |     exp '*' exp                   { $$ = $1 * $3;    }
+    |     exp '/' exp                   { $$ = $1 / $3;    }
+    |     '-' exp  %prec NEGATIVE        { $$ = - $2;       }
     |     COS   term                      { $$ = cos($2);    }
     |     EXP   term                      { $$ = exp($2);    }
     |     SIN   term                      { $$ = sin($2);    }
@@ -64,9 +74,9 @@ list:
 //-----------------------------------------------------------------------------------------
 
 
-term:     NUMBER                   { $$ = $1;         }
+term:     ENTERO                   { $$ = $1;         }
     |     LAST                     { $$ = last_value; }
-    |     '(' expr ')'             { $$ = $2;         }
+    |     '(' exp ')'             { $$ = $2;         }
     ;
 
 %%

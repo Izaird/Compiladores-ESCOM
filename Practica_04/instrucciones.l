@@ -10,25 +10,48 @@ extern int lineno;        /* Actual numero de linea  */
 extern YYSTYPE yylval;    /* Valor numerico del token */
 %}
 
-
-
-numero [0-9]
+numero [0-9]+
 espacio [ \t]
 potencia [pP][Oo][Ww]
 
-
 %%
 
-{espacio}         { ; }    /* espacios son ignorados */
+{espacio}               { ; }    /* espacios son ignorados */
 
 
+{numero}                   {
+                            printf("Numero entero %s\n",yytext);
+                            yylval.entero = atoi(yytext);
+                            return (ENTERO);
+                        }
 
-{numero}+\.?|{numero}*\.{numero}+ { 
-                   yylval = strtod(yytext,0); 
-                   return NUMBER; }
+({numero})(".")({numero})    {
+                            printf("Numero flotante %s\n",yytext);
+                            yylval.flotante = strtod(yytext, NULL);
+                            return (FLOTANTE);
+                        }
+
+\"([^"]*)\"             {
+                            int i = 0;
+                            char *str = NULL;
+                            str = (char *) malloc(yyleng-1);
+                            yylval.string = str;
+                            yytext++;
+                            for(i = 0; i < yyleng-2; i++){
+                                *str = *yytext;
+                                str++;
+                                yytext++;
+                            }
+                            *str = '\0';
+                            printf("Cadena: %s\n", yylval.string);
+                            return(CADENA);
+                        }
 
 
-{potencia}      { return POW;  }
+{potencia}              {  
+                            printf("Potencia %s\n",yytext);
+                            return POW;  
+                        }
 
 last            { return LAST; }
 
@@ -43,10 +66,10 @@ sqrt            { return SQRT; }
 tan             { return TAN;  }
 
 pi              { yylval = atan(1.0)*4; 
-                  return NUMBER; }
+                  return FLOTANTE; }
 
 e               { yylval = exp(1.0);    
-                  return NUMBER; }
+                  return FLOTANTE; }
 
 \n              { lineno++; return '\n'; } //Se va incrementando cada salto de linea
 
