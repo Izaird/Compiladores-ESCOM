@@ -3,8 +3,6 @@
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
-#define YYSTYPE double
-YYSTYPE last_value = 0;
 
 extern int yylex(void);
 
@@ -15,16 +13,15 @@ extern int yylex(void);
 //-----------------------------------------------------------------------------------------
 %union{
 	int entero;
-  float flotante;
+  double flotante;
   char* string;
 }
 %token <entero> ENTERO
 %type <entero> exp term
 %token <flotante> FLOTANTE
-%type <flotante> expf
+%type <flotante> expf termf
 %token <string> CADENA
 %type <string> exp_str
-%token LAST
 %left '+' '-'
 %left '*' '/'
 %left NEGATIVE
@@ -41,30 +38,60 @@ extern int yylex(void);
 //-----------------------------------------------------------------------------------------
 //Una lista puede estar vacia, contener espacioes en blanco o contener expresiones
 //-----------------------------------------------------------------------------------------
-list:
+input:    /* cadena vacía */
+        | input line             
+;
 
-    |    list '\n'
-    |    list exp '\n'           { printf("%.8g\n",last_value=$2);}
-    ; 
+line:     '\n'
+        | exp '\n'  { printf ("\tresultado: %d\n", $1); }
+        | expf '\n'  { printf ("\tresultado: %.8g\n", $1); }
+        | exp_str '\n' { printf("\tresultado: %s\n", $1); }
+;
 //-----------------------------------------------------------------------------------------
 //Las expresiones son definidas recursivamente como cadenas de terminos
 //y expresiones. 
 //-----------------------------------------------------------------------------------------
 
 
-    exp:     term                        { $$ = $1;         }
-    |     exp '+' exp                   { $$ = $1 + $3;    }
-    |     exp '-' exp                   { $$ = $1 - $3;    }
-    |     exp '*' exp                   { $$ = $1 * $3;    }
-    |     exp '/' exp                   { $$ = $1 / $3;    }
-    |     '-' exp  %prec NEGATIVE        { $$ = - $2;       }
-    |     COS   term                      { $$ = cos($2);    }
-    |     EXP   term                      { $$ = exp($2);    }
-    |     SIN   term                      { $$ = sin($2);    }
-    |     SQRT  term                      { $$ = sqrt($2);   }
-    |     TAN   term                      { $$ = tan($2);    } 
-    |     POW   '(' term ',' term ')' ';' { $$ = pow($3,$5); }
+exp:  term                                    { $$ = $1;         }
+    |     exp '+' exp                         { $$ = $1 + $3;    }
+    |     exp '-' exp                         { $$ = $1 - $3;    }
+    |     exp '*' exp                         { $$ = $1 * $3;    }
+    |     exp '/' exp                         { $$ = $1 / $3;    }
+    |     '-' exp  %prec NEGATIVE             { $$ = - $2;       }
+    |     COS   term                          { $$ = cos($2);    }
+    |     EXP   term                          { $$ = exp($2);    }
+    |     SIN   term                          { $$ = sin($2);    }
+    |     SQRT  term                          { $$ = sqrt($2);   }
+    |     TAN   term                          { $$ = tan($2);    } 
+    |     POW   '(' term ',' term ')' ';'     { $$ = pow($3,$5); }
     ;
+
+
+expf:  termf                                  { $$ = $1;         }
+    |     expf '+' expf                       { $$ = $1 + $3;    }
+    |     expf '+' exp                        { $$ = $1 + $3;    }
+    |     exp '+' expf                        { $$ = $1 + $3;    }
+    |     expf '-' expf                       { $$ = $1 - $3;    }
+    |     expf '-' exp                        { $$ = $1 - $3;    }
+    |     exp '-' expf                        { $$ = $1 - $3;    }
+    |     expf '*' expf                       { $$ = $1 * $3;    }
+    |     expf '*' exp                        { $$ = $1 * $3;    }
+    |     exp '*' expf                        { $$ = $1 * $3;    }
+    |     expf '/' expf                       { $$ = $1 / $3;    }
+    |     expf '/' exp                        { $$ = $1 / $3;    }
+    |     exp '/' expf                        { $$ = $1 / $3;    }
+    |     '-' expf  %prec NEGATIVE            { $$ = - $2;       }
+    |     COS   termf                         { $$ = cos($2);    }
+    |     EXP   termf                         { $$ = exp($2);    }
+    |     SIN   termf                         { $$ = sin($2);    }
+    |     SQRT  termf                         { $$ = sqrt($2);   }
+    |     TAN   termf                         { $$ = tan($2);    } 
+    |     POW   '(' termf ',' termf ')' ';'   { $$ = pow($3,$5); }
+    |     POW   '(' termf ',' term ')' ';'    { $$ = pow($3,$5); }
+    |     POW   '(' term ',' termf ')' ';'    { $$ = pow($3,$5); }
+    ;
+
 
 
 //-----------------------------------------------------------------------------------------
@@ -73,12 +100,19 @@ list:
 // puedan funcionar correctamente
 //-----------------------------------------------------------------------------------------
 
+termf:     FLOTANTE               { $$ = $1;         }
+    |     '(' expf ')'             { $$ = $2;         }
+    ;
+
 
 term:     ENTERO                   { $$ = $1;         }
-    |     LAST                     { $$ = last_value; }
     |     '(' exp ')'             { $$ = $2;         }
     ;
 
+
+exp_str: CADENA {$$ = $1;}
+  | exp_str '+' exp_str  {$$ = strcat($1,$3);}
+;
 %%
 
 

@@ -3,7 +3,6 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <math.h>
-#define YYSTYPE double
 #include "y.tab.h"
 
 extern int lineno;        /* Actual numero de linea  */
@@ -52,8 +51,10 @@ potencia [pP][Oo][Ww]
                             printf("Potencia %s\n",yytext);
                             return POW;  
                         }
-
-last            { return LAST; }
+"+"|"-"|"/"|"*"|"("|")"	 	{
+		printf("Signo: %s\n",yytext);
+                return (yytext[0]);
+                }
 
 cos             { return COS;  }
 
@@ -65,16 +66,15 @@ sqrt            { return SQRT; }
 
 tan             { return TAN;  }
 
-pi              { yylval = atan(1.0)*4; 
+pi              { yylval.flotante = atan(1.0)*4; 
                   return FLOTANTE; }
 
-e               { yylval = exp(1.0);    
+e               { yylval.flotante = exp(1.0);    
                   return FLOTANTE; }
 
 \n              { lineno++; return '\n'; } //Se va incrementando cada salto de linea
 
 
-.               { return yytext[0]; }
 
 
 
