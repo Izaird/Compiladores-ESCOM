@@ -52,8 +52,8 @@ potencia [pP][Oo][Ww]
                             return POW;  
                         }
 "+"|"-"|"/"|"*"|"("|")"	 	{
-		printf("Signo: %s\n",yytext);
-                return (yytext[0]);
+		                    printf("Signo: %s\n",yytext);
+                            return (yytext[0]);
                 }
 
 cos             { return COS;  }
