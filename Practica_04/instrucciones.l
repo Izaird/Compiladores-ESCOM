@@ -51,7 +51,7 @@ potencia [pP][Oo][Ww]
                             printf("Potencia %s\n",yytext);
                             return POW;  
                         }
-"+"|"-"|"/"|"*"|"("|")"	 	{
+","|"+"|"-"|"/"|"*"|"("|")"|";"	 	{
 		                    printf("Signo: %s\n",yytext);
                             return (yytext[0]);
                 }

@@ -64,7 +64,7 @@ exp:  term					{ $$ = $1;         	}
     |     SIN   term				{ $$ = sin($2);    	}
     |     SQRT  term				{ $$ = sqrt($2);   	}
     |     TAN   term				{ $$ = tan($2);    	} 
-    |     POW   '(' term ',' term ')' ';'	{ $$ = pow($3,$5); 	}
+    |     POW   '(' term ',' term ')'';' 	{ $$ = pow($3,$5); 	}
     ;
 
 
