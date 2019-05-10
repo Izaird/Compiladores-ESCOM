@@ -1,64 +1,81 @@
 %{
-#include "y.tab.h"
 #include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <math.h>
+#include "y.tab.h"
+
+extern int lineno;        /* Actual numero de linea  */
+extern YYSTYPE yylval;    /* Valor numerico del token */
 %}
 
-NUM [0-9]+
+numero [0-9]+
+espacio [ \t]
+potencia [pP][Oo][Ww]
+
 %%
 
-{NUM}             {
-		printf("Numero entero %s\n",yytext);
-                yylval.entero = atoi(yytext);
-                return (ENTERO);
-                }
-
-({NUM})(".")({NUM})    {
-		printf("Numero entero %s\n",yytext);
-                yylval.flotante = strtof(yytext, NULL);
-                return (FLOTANTE);
-                }
+{espacio}               { ; }    /* espacios son ignorados */
 
 
-"+"	 	{
-		printf("Signo suma\n");
-                return (yytext[0]);
+{numero}                   {
+                            printf("Numero entero %s\n",yytext);
+                            yylval.entero = atoi(yytext);
+                            return (ENTERO);
+                        }
+
+({numero})(".")({numero})    {
+                            printf("Numero flotante %s\n",yytext);
+                            yylval.flotante = strtod(yytext, NULL);
+                            return (FLOTANTE);
+                        }
+
+\"([^"]*)\"             {
+                            int i = 0;
+                            char *str = NULL;
+                            str = (char *) malloc(yyleng-1);
+                            yylval.string = str;
+                            yytext++;
+                            for(i = 0; i < yyleng-2; i++){
+                                *str = *yytext;
+                                str++;
+                                yytext++;
+                            }
+                            *str = '\0';
+                            printf("Cadena: %s\n", yylval.string);
+                            return(CADENA);
+                        }
+
+
+{potencia}              {  
+                            printf("Potencia %s\n",yytext);
+                            return POW;  
+                        }
+"+"|"-"|"/"|"*"|"("|")"	 	{
+		                    printf("Signo: %s\n",yytext);
+                            return (yytext[0]);
                 }
 
-"-"	 	{
-		printf("Signo resta\n");
-                return (yytext[0]);
-                }
+cos             { return COS;  }
 
-"*"	 	{
-		printf("Signo mult\n");
-                return (yytext[0]);
-                }
+exp             { return EXP;  }
+
+sin             { return SIN;  }
+
+sqrt            { return SQRT; }
+
+tan             { return TAN;  }
+
+pi              { yylval.flotante = atan(1.0)*4; 
+                  return FLOTANTE; }
+
+e               { yylval.flotante = exp(1.0);    
+                  return FLOTANTE; }
+
+\n              { lineno++; return '\n'; } //Se va incrementando cada salto de linea
 
 
-"/"	 	{
-		printf("Signo div\n");
-                return (yytext[0]);
-                }
 
-\"([^"]*)\"       {
-                int i = 0;
-		char *str = NULL;
-                str = (char *) malloc(yyleng-1);
-                yylval.string = str;
-                yytext++;
-                for(i = 0; i < yyleng-2; i++){
-                    *str = *yytext;
-                    str++;
-                    yytext++;
-                }
-                *str = '\0';
-                printf("Cadena: %s\n", yylval.string);
-                return(CADENA);
-                }
-"d"+"dd"
-"\n"            {
-		printf("Salto de linea\n");
-                return (yytext[0]);
-                }
+
+
 %%
-
