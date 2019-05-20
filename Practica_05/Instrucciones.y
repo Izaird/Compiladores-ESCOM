@@ -1,4 +1,6 @@
 %{
+#define true 1
+#define false 0
 #include <stdio.h>
 #include <math.h>
 #include <stdio.h>
@@ -6,6 +8,7 @@
 #include <stdlib.h>
 #include "cadenas_op.h"
 #include "tabla_sim.h"
+#include "variables.h"
 %}
 
 /*Declaraciones de Bison*/
@@ -71,54 +74,14 @@ line: '\n'
 //-----------------------------------------------------------------------------------------
 //Condicionales
 //-----------------------------------------------------------------------------------------
-	| IF '(' exp_i '>' exp_i ')' ';' '\n' { 
-		if($3 > $5)
-			printf("\tTRUE\n\n");
-		else
-			printf("\tFALSE\n\n");
-	}
-	| IF '(' exp_i '<' exp_i ')' ';' '\n' { 
-		if($3 < $5)
-			printf("\tTRUE\n\n");
-		else
-			printf("\tFALSE\n\n");
-	}
-	| IF '(' exp_f '>' exp_i ')' ';' '\n' { 
-		if($3 > $5)
-			printf("\tTRUE\n\n");
-		else
-			printf("\tFALSE\n\n");
-	}
-	| IF '(' exp_f '<' exp_i ')' ';' '\n' { 
-		if($3 < $5)
-			printf("\tTRUE\n\n");
-		else
-			printf("\tFALSE\n\n");
-	}
-	| IF '(' exp_i '>' exp_f ')' ';' '\n' { 
-		if($3 > $5)
-			printf("\tTRUE\n\n");
-		else
-			printf("\tFALSE\n\n");
-	}
-	| IF '(' exp_i '<' exp_f ')' ';' '\n' { 
-		if($3 < $5)
-			printf("\tTRUE\n\n");
-		else
-			printf("\tFALSE\n\n");
-	}
-	| IF '(' exp_f '>' exp_f ')' ';' '\n' { 
-		if($3 > $5)
-			printf("\tTRUE\n\n");
-		else
-			printf("\tFALSE\n\n");
-	}
-	| IF '(' exp_f '<' exp_f ')' ';' '\n' { 
-		if($3 < $5)
-			printf("\tTRUE\n\n");
-		else
-			printf("\tFALSE\n\n");
-	}
+	| IF '(' exp_i '>' exp_i ')' ';' '\n' { ($3 > $5)?	printf("\tTRUE\n\n") : printf("\tFALSE\n\n");}
+	| IF '(' exp_i '<' exp_i ')' ';' '\n' { ($3 < $5)?	printf("\tTRUE\n\n") : printf("\tFALSE\n\n");}
+	| IF '(' exp_f '>' exp_i ')' ';' '\n' { ($3 > $5)?	printf("\tTRUE\n\n") : printf("\tFALSE\n\n");}
+	| IF '(' exp_f '<' exp_i ')' ';' '\n' { ($3 < $5)?	printf("\tTRUE\n\n") : printf("\tFALSE\n\n");}
+	| IF '(' exp_i '>' exp_f ')' ';' '\n' { ($3 > $5)?	printf("\tTRUE\n\n") : printf("\tFALSE\n\n");}
+	| IF '(' exp_i '<' exp_f ')' ';' '\n' { ($3 < $5)?	printf("\tTRUE\n\n") : printf("\tFALSE\n\n");}
+	| IF '(' exp_f '>' exp_f ')' ';' '\n' { ($3 > $5)?	printf("\tTRUE\n\n") : printf("\tFALSE\n\n");}
+	| IF '(' exp_f '<' exp_f ')' ';' '\n' { ($3 < $5)?	printf("\tTRUE\n\n") : printf("\tFALSE\n\n");}
 ;
 
 //-----------------------------------------------------------------------------------------
@@ -171,55 +134,24 @@ term:     ENTERO							{ $$ = $1;         	}
 
 
 
-/** Expresion que usa cadenas **/
+//-----------------------------------------------------------------------------------------
+//Expresiones con cadenas
+//-----------------------------------------------------------------------------------------
 exp_c: CADENA {	$$ = $1; }
 	| '(' exp_c ')'	{ $$ = $2; }
 	| exp_c '+' exp_c						{$$ = conca($1,$3);}
-	| exp_c '^' exp_i						{
-		char* aux = (char*)malloc(sizeof(char)*1);
-		aux[0] = '\n';
-		int i;
-		for(i = 0; i < $3; i ++)
-			aux = conca($1,aux);
-		$$ = aux;
-	}
-	| POW '(' exp_c ',' exp_i ')' ';'
-	{
-		char* aux = (char*)malloc(sizeof(char)*1);
-		aux[0] = '\n';
-		int i;
-		for(i = 0; i < $5; i ++)
-			aux = conca($3,aux);
-		$$ = aux;
-	}
-	| exp_c '+' exp_i
-	{
-		char* num = (char*)malloc(sizeof(char)*10);
-		sprintf(num, "%d", $3);
-		$$ = conca($1,num);
-	}
-	| exp_i '+' exp_c
-	{
-		char* num = (char*)malloc(sizeof(char)*10);
-		sprintf(num, "%d", $1);
-		$$ = conca(num,$3);
-	}
-	| exp_c '+' exp_f
-	{
-		char* num = (char*)malloc(sizeof(char)*10);
-		sprintf(num, "%.4g", $3);
-		$$ = conca($1,num);
-	}
-	| exp_f '+' exp_c
-	{
-		char* num = (char*)malloc(sizeof(char)*10);
-		sprintf(num, "%.4g", $1);
-		$$ = conca(num,$3);
-	}
+	| exp_c '^' exp_i						{$$ = pow_s($1,$3);}
+	| POW '(' exp_c ',' exp_i ')' ';'		{$$ = pow_s($3,$5);}
+	| exp_c '+' exp_i						{$$ = conca_i($1,$3);}
+	| exp_i '+' exp_c						{$$ = conca_i($3,$1);}
+	| exp_c '+' exp_f						{$$ = conca_f($1,$3);}
+	| exp_f '+' exp_c						{$$ = conca_f($3,$1);}
+
 ;
 
+
 exp_Var: VARIABLE
-		{
+{
 			char* nombre = lexema_aux($1);
 			table* aux = get_nodo(nombre);
 			if(aux == NULL)
@@ -228,322 +160,46 @@ exp_Var: VARIABLE
 		}
 		| '(' exp_Var ')'	{	$$ = $2;	}
 
-			/** Operaciones con variables **/
-		| exp_Var '+' exp_Var	
-		{
-			table* aux = NULL;
-			if($1 != NULL && $3 != NULL)
-			{
-				aux = (table*)malloc(sizeof(table));
-				if($1->tipo == 2 && $3->tipo == 2)
-				{
-					char* resultado = conca($1->valor.s,$3->valor.s);
-					val.s = resultado;
-					aux->tipo = 2;
-					aux->valor = val;
-				}else if($1->tipo == 2 || $3-> tipo == 2)
-				{
-					char* num = (char*)malloc(sizeof(char)*10);
-					char* resultado;
-					if($1->tipo == 2)
-					{
-						sprintf(num, "%.4g", ($3->tipo == 0) ? $3->valor.e : $3->valor.f);
-						resultado = conca($1->valor.s,num);
-					}
-					else
-					{
-						sprintf(num, "%.4g", ($1->tipo == 0) ? $1->valor.e : $1->valor.f);
-						resultado = conca(num,$3->valor.s);
-					}
-					val.s = resultado;
-					aux->tipo = 2;
-					aux->valor = val;
-				}else
-				{
-					val.f = (($1->tipo == 0) ? $1->valor.e : $1->valor.f) + (($3->tipo == 0) ? $3->valor.e : $3->valor.f);
-					aux->tipo = 1;
-					aux->valor = val;
-				}
-			}
-			$$ =  aux;
-		}
-		| exp_Var '-' exp_Var
-		{
-			table* aux = NULL;
-			if($1 != NULL && $3 != NULL && $1->tipo != 2 && $3->tipo != 2)
-			{
-				aux = (table*)malloc(sizeof(table));
-				val.f = (($1->tipo == 0) ? $1->valor.e : $1->valor.f) - (($3->tipo == 0) ? $3->valor.e : $3->valor.f);
-				aux->tipo = 1;
-				aux->valor = val;
-			}
-			$$ =  aux;	
-		}
-		| exp_Var '*' exp_Var
-		{
-			table* aux = NULL;
-			if($1 != NULL && $3 != NULL && $1->tipo != 2 && $3->tipo != 2)
-			{
-				aux = (table*)malloc(sizeof(table));
-				val.f = (($1->tipo == 0) ? $1->valor.e : $1->valor.f) * (($3->tipo == 0) ? $3->valor.e : $3->valor.f);
-				aux->tipo = 1;
-				aux->valor = val;
-			}
-			$$ =  aux;	
-		}
-		| exp_Var '/' exp_Var
-		{
-			table* aux = NULL;
-			if($1 != NULL && $3 != NULL && $1->tipo != 2 && $3->tipo != 2)
-			{
-				aux = (table*)malloc(sizeof(table));
-				val.f = (($1->tipo == 0) ? $1->valor.e : $1->valor.f) / (($3->tipo == 0) ? $3->valor.e : $3->valor.f);
-				aux->tipo = 1;
-				aux->valor = val;
-			}
-			$$ =  aux;	
-		}
-		| exp_Var '^' exp_Var
-		{
-			table* aux = NULL;
-			if($1 != NULL && $3 != NULL)
-			{
-				aux = (table*)malloc(sizeof(table));
-				if($1->tipo == 2 && $3-> tipo == 0 || $3-> tipo == 1)
-				{
-					char* resultado = (char*)malloc(sizeof(char)*1);
-					resultado[0] = '\n';
-					int i,fin = ($3->tipo == 0) ? $3->valor.e : $3->valor.f;
-					for(i = 0; i < fin; i ++)
-						resultado = conca($1->valor.s,resultado);
-					val.s = resultado;
-					aux->tipo = 2;
-					aux->valor = val;
-				}else
-				{
-					val.f = pow((($1->tipo == 0) ? $1->valor.e : $1->valor.f),(($3->tipo == 0) ? $3->valor.e : $3->valor.f));
-					aux->tipo = 1;
-					aux->valor = val;
-				}
-			}
-			$$ =  aux;
-		}
-		| POW '(' exp_Var ',' exp_Var ')' ';'
-		{
-			table* aux = NULL;
-			if($3 != NULL && $5 != NULL)
-			{
-				aux = (table*)malloc(sizeof(table));
-				if($3->tipo == 2 && $5-> tipo == 0 || $5-> tipo == 1)
-				{
-					char* resultado = (char*)malloc(sizeof(char)*1);
-					resultado[0] = '\n';
-					int i,fin = ($5->tipo == 0) ? $5->valor.e : $5->valor.f;
-					for(i = 0; i < fin; i ++)
-						resultado = conca($3->valor.s,resultado);
-					val.s = resultado;
-					aux->tipo = 2;
-					aux->valor = val;
-				}else
-				{
-					val.f = pow((($3->tipo == 0) ? $3->valor.e : $3->valor.f),(($5->tipo == 0) ? $5->valor.e : $5->valor.f));
-					aux->tipo = 1;
-					aux->valor = val;
-				}
-			}
-			$$ =  aux;
-		}
+//-----------------------------------------------------------------------------------------
+//Expresiones con variables
+//-----------------------------------------------------------------------------------------
+		| exp_Var '+' exp_Var					{$$ = add_var($1,$3);}
+		| exp_Var '-' exp_Var					{$$ = sub_var($1,$3);}
+		| exp_Var '*' exp_Var					{$$ = mul_var($1,$3);}
+		| exp_Var '/' exp_Var					{$$ = div_var($1,$3);}
+		| exp_Var '^' exp_Var					{$$ = pow_var($1,$3);}
+		| POW '(' exp_Var ',' exp_Var ')' ';'	{$$ = pow_var($3,$5);}
+//-----------------------------------------------------------------------------------------
+//Expresiones con variables y reales
+//-----------------------------------------------------------------------------------------
+		| exp_Var '+' exp_i						{$$ = add_var_i($1,$3,0);}
+		| exp_i '+' exp_Var						{$$ = add_var_i($3,$1,1);}
+		| exp_Var '+' exp_f						{$$ = add_var_f($1,$3,0);}
+		| exp_f '+' exp_Var						{$$ = add_var_f($3,$1,1);}
+		| exp_Var '-' exp_i 					{ $$ = operacion($1,$3,0,1); }
+		| exp_i '-' exp_Var 					{ $$ = operacion($3,$1,1,1); }
+		| exp_Var '/' exp_i 					{ $$ = operacion($1,$3,0,2); }
+		| exp_i '/' exp_Var 					{ $$ = operacion($3,$1,1,2); }
+		| exp_Var '*' exp_i 					{ $$ = operacion($1,$3,0,3); }
+		| exp_i '*' exp_Var 					{ $$ = operacion($3,$1,1,3); }
+		| exp_Var '^' exp_i						{$$ = pow_var_i($1,$3,0);}
+		| exp_i '^' exp_Var 					{$$ = pow_var_i($3,$1,1);}
+		| POW '(' exp_Var ',' exp_i ')' ';'		{$$ = pow_var_i($3,$5,0);}
+		| POW '(' exp_i ',' exp_Var ')' ';' 	{$$ = pow_var_i($5,$3,1);}		
+		| exp_Var '-' exp_f 					{ $$ = operacion($1,$3,0,1); }
+		| exp_f '-' exp_Var 					{ $$ = operacion($3,$1,1,1); }
+		| exp_Var '/' exp_f 					{ $$ = operacion($1,$3,0,2); }
+		| exp_f '/' exp_Var 					{ $$ = operacion($3,$1,1,2); }
+		| exp_Var '*' exp_f 					{ $$ = operacion($1,$3,0,3); }
+		| exp_f '*' exp_Var 					{ $$ = operacion($3,$1,1,3); }
+		| exp_Var '^' exp_f						{ $$ = operacion($1,$3,0,4); }
+		| exp_f '^' exp_Var 					{ $$ = operacion($3,$1,1,4); }
+		| POW '(' exp_Var ',' exp_f ')' ';'		{ $$ = operacion($3,$5,0,4); }
+		| POW '(' exp_f ',' exp_Var ')' ';' 	{ $$ = operacion($5,$3,1,4); }
 
-		| exp_Var '+' exp_i
-		{
-			table* aux = NULL;
-			if($1 != NULL)
-			{
-				aux = (table*)malloc(sizeof(table));
-				if($1->tipo == 2)
-				{
-					char* num = (char*)malloc(sizeof(char)*10);
-					char* resultado;
-					sprintf(num, "%d", $3);
-					resultado = conca($1->valor.s,num);
-					val.s = resultado;
-					aux->tipo = 2;
-					aux->valor = val;
-				}
-				else
-					aux = operacion($1,$3,0,0);
-			}
-			$$ = aux;	
-		}
-		| exp_i '+' exp_Var
-		{
-			table* aux = NULL;
-			if($3 != NULL)
-			{
-				aux = (table*)malloc(sizeof(table));
-				if($3->tipo == 2)
-				{
-					char* num = (char*)malloc(sizeof(char)*10);
-					char* resultado;
-					sprintf(num, "%d", $1);
-					resultado = conca(num,$3->valor.s);
-					val.s = resultado;
-					aux->tipo = 2;
-					aux->valor = val;
-				}
-				else
-					aux = operacion($3,$1,1,0);
-			}
-			$$ = aux;	
-		}
-		| exp_Var '^' exp_i
-		{
-			table* aux = NULL;
-			if($1 != NULL)
-			{
-				aux = (table*)malloc(sizeof(table));
-				if($1->tipo != 2)
-					aux = operacion($1,$3,0,4);
-				else
-				{
-					char* resultado = (char*)malloc(sizeof(char)*1);
-					resultado[0] = '\n';
-					int i,fin = $3;
-					for(i = 0; i < fin; i ++)
-						resultado = conca($1->valor.s,resultado);
-					val.s = resultado;
-					aux->tipo = 2;
-					aux->valor = val;
-				}
-			}
-			$$ = aux;
-		}
-		| exp_i '^' exp_Var { $$ = operacion($3,$1,1,4); }
-		| POW '(' exp_Var ',' exp_i ')' ';'
-		{
-			table* aux = NULL;
-			if($3 != NULL)
-			{
-				aux = (table*)malloc(sizeof(table));
-				if($3->tipo != 2)
-					aux = operacion($3,$5,0,4);
-				else
-				{
-					char* resultado = (char*)malloc(sizeof(char)*1);
-					resultado[0] = '\n';
-					int i,fin = $5;
-					for(i = 0; i < fin; i ++)
-						resultado = conca($3->valor.s,resultado);
-					val.s = resultado;
-					aux->tipo = 2;
-					aux->valor = val;
-				}
-			}
-			$$ = aux;
-		}
-		| POW '(' exp_i ',' exp_Var ')' ';' { $$ = operacion($5,$3,1,4); }
-		| exp_Var '-' exp_i { $$ = operacion($1,$3,0,1); }
-		| exp_i '-' exp_Var { $$ = operacion($3,$1,1,1); }
-		| exp_Var '*' exp_i { $$ = operacion($1,$3,0,3); }
-		| exp_i '*' exp_Var { $$ = operacion($3,$1,1,3); }
-		| exp_Var '/' exp_i { $$ = operacion($1,$3,0,2); }
-		| exp_i '/' exp_Var { $$ = operacion($3,$1,1,2); }
-
-		| exp_Var '+' exp_f
-		{
-			table* aux = NULL;
-			if($1 != NULL)
-			{
-				aux = (table*)malloc(sizeof(table));
-				if($1->tipo == 2)
-				{
-					char* num = (char*)malloc(sizeof(char)*10);
-					char* resultado;
-					sprintf(num, "%g", $3);
-					resultado = conca($1->valor.s,num);
-					val.s = resultado;
-					aux->tipo = 2;
-					aux->valor = val;
-				}
-				else
-					aux = operacion($1,$3,0,0);
-			}
-			$$ = aux;	
-		}
-		| exp_f '+' exp_Var
-		{
-			table* aux = NULL;
-			if($3 != NULL)
-			{
-				aux = (table*)malloc(sizeof(table));
-				if($3->tipo == 2)
-				{
-					char* num = (char*)malloc(sizeof(char)*10);
-					char* resultado;
-					sprintf(num, "%g", $1);
-					resultado = conca(num,$3->valor.s);
-					val.s = resultado;
-					aux->tipo = 2;
-					aux->valor = val;
-				}
-				else
-					aux = operacion($3,$1,1,0);
-			}
-			$$ = aux;	
-		}
-		| exp_Var '^' exp_f
-		{
-			table* aux = NULL;
-			if($1 != NULL)
-			{
-				aux = (table*)malloc(sizeof(table));
-				if($1->tipo != 2)
-					aux = operacion($1,$3,0,4);
-				else
-				{
-					char* resultado = (char*)malloc(sizeof(char)*1);
-					resultado[0] = '\n';
-					int i,fin = $3;
-					for(i = 0; i < fin; i ++)
-						resultado = conca($1->valor.s,resultado);
-					val.s = resultado;
-					aux->tipo = 2;
-					aux->valor = val;
-				}
-			}
-			$$ = aux;
-		}
-		| exp_f '^' exp_Var { $$ = operacion($3,$1,1,4); }
-		| POW '(' exp_Var ',' exp_f ')' ';'
-		{
-			table* aux = NULL;
-			if($3 != NULL)
-			{
-				aux = (table*)malloc(sizeof(table));
-				if($3->tipo != 2)
-					aux = operacion($3,$5,0,4);
-				else
-				{
-					char* resultado = (char*)malloc(sizeof(char)*1);
-					resultado[0] = '\n';
-					int i,fin = $5;
-					for(i = 0; i < fin; i ++)
-						resultado = conca($3->valor.s,resultado);
-					val.s = resultado;
-					aux->tipo = 2;
-					aux->valor = val;
-				}
-			}
-			$$ = aux;
-		}
-		| POW '(' exp_f ',' exp_Var ')' ';' { $$ = operacion($5,$3,1,4); }
-		| exp_Var '-' exp_f { $$ = operacion($1,$3,0,1); }
-		| exp_f '-' exp_Var { $$ = operacion($3,$1,1,1); }
-		| exp_Var '*' exp_f { $$ = operacion($1,$3,0,3); }
-		| exp_f '*' exp_Var { $$ = operacion($3,$1,1,3); }
-		| exp_Var '/' exp_f { $$ = operacion($1,$3,0,2); }
-		| exp_f '/' exp_Var { $$ = operacion($3,$1,1,2); }
-
+//-----------------------------------------------------------------------------------------
+//Expresiones con variables y cadenas
+//-----------------------------------------------------------------------------------------
 		| exp_Var '+' exp_c
 		{
 			table* aux = NULL;
