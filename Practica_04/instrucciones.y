@@ -17,9 +17,9 @@ extern int yylex(void);
 	char* string;
 }
 %token <entero> ENTERO
-%type <entero> exp_i term
+%type <entero> exp term
 %token <flotante> RACIONAL
-%type <flotante> exp_f termf
+%type <flotante> expf termf
 %token <string> CADENA
 %type <string> exp_str
 %left '+' '-'
@@ -44,7 +44,7 @@ input:    /* cadena vacía */
 
 line:     '\n'
         | exp '\n'  { printf ("\tresultado: %d\n", $1); }
-        | exp_f '\n'  { printf ("\tresultado: %.8g\n", $1); }
+        | expf '\n'  { printf ("\tresultado: %.8g\n", $1); }
         | exp_str '\n' { printf("\tresultado: %s\n", $1); }
 ;
 //-----------------------------------------------------------------------------------------
@@ -68,20 +68,20 @@ exp:  term					{ $$ = $1;         	}
     ;
 
 
-exp_f:  termf					{ $$ = $1;         	}
-    |     exp_f '+' exp_f				{ $$ = $1 + $3;    	}
-    |     exp_f '+' exp				{ $$ = $1 + $3;    	}
-    |     exp  '+' exp_f				{ $$ = $1 + $3;    	}
-    |     exp_f '-' exp_f				{ $$ = $1 - $3;    	}
-    |     exp_f '-' exp				{ $$ = $1 - $3;    	}
-    |     exp  '-' exp_f				{ $$ = $1 - $3;    	}
-    |     exp_f '*' exp_f				{ $$ = $1 * $3;    	}
-    |     exp_f '*' exp 				{ $$ = $1 * $3;    	}
-    |     exp  '*' exp_f				{ $$ = $1 * $3;    	}
-    |     exp_f '/' exp_f				{ $$ = $1 / $3;    	}
-    |     exp_f '/' exp				{ $$ = $1 / $3;    	}
-    |     exp  '/' exp_f				{ $$ = $1 / $3;    	}
-    |     '-' exp_f  %prec NEGATIVE		{ $$ = - $2;       	}
+expf:  termf					{ $$ = $1;         	}
+    |     expf '+' expf				{ $$ = $1 + $3;    	}
+    |     expf '+' exp				{ $$ = $1 + $3;    	}
+    |     exp  '+' expf				{ $$ = $1 + $3;    	}
+    |     expf '-' expf				{ $$ = $1 - $3;    	}
+    |     expf '-' exp				{ $$ = $1 - $3;    	}
+    |     exp  '-' expf				{ $$ = $1 - $3;    	}
+    |     expf '*' expf				{ $$ = $1 * $3;    	}
+    |     expf '*' exp 				{ $$ = $1 * $3;    	}
+    |     exp  '*' expf				{ $$ = $1 * $3;    	}
+    |     expf '/' expf				{ $$ = $1 / $3;    	}
+    |     expf '/' exp				{ $$ = $1 / $3;    	}
+    |     exp  '/' expf				{ $$ = $1 / $3;    	}
+    |     '-' expf  %prec NEGATIVE		{ $$ = - $2;       	}
     |     COS   termf				{ $$ = cos($2);    	}
     |     EXP   termf				{ $$ = exp($2);    	}
     |     SIN   termf				{ $$ = sin($2);    	}
@@ -100,7 +100,7 @@ exp_f:  termf					{ $$ = $1;         	}
 //-----------------------------------------------------------------------------------------
 
 termf:     RACIONAL				{ $$ = $1;         	}
-    |     '(' exp_f ')'				{ $$ = $2;         	}
+    |     '(' expf ')'				{ $$ = $2;         	}
     ;
 
 
