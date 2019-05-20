@@ -21,7 +21,6 @@ void print_var(struct table* numero){
 
 }
 
-
 // Declaracion de una variable numerica
 void declaration_var(char* variable, double valor, int tipo_var){
 	int valor_int =(int)valor;
@@ -89,6 +88,7 @@ void change_val(char* variable, double valor,int tipo_val){
 	}
 }
 
+// Declaracion de una variable tipo string
 void declaration_var_s(char* variable, char* valor){
 	if (valor==0){
 		char* temp = lexema_aux(variable);
@@ -110,6 +110,7 @@ void declaration_var_s(char* variable, char* valor){
 	}
 }
 
+// Cambia el valor de una variable tipo string
 void change_val_s(char* variable, char* valor){
 		char* temp =  lexema_aux(variable);
 		table* aux =  get_nodo(temp);
@@ -127,7 +128,6 @@ void change_val_s(char* variable, char* valor){
 		else
 			printf("\t\e[35mVariable no declarada\e[0m\n");
 }
-
 
 // Suma dos variables
 struct table* add_var(struct table *var_1, struct table* var_2){
@@ -233,7 +233,6 @@ struct table* pow_var(struct table *var_1, struct table* var_2){
 			return aux;
 }
 
-
 // Realiza operaciones de variables y reales
 table* operacion(table* variable,float num,int orden,int operacion){
 	table* aux = NULL;
@@ -305,7 +304,7 @@ table* operacion(table* variable,float num,int orden,int operacion){
 	return aux;
 }
 
-
+// Realiza una adicion de una variable y un entero
 struct table* add_var_i(struct table *var_1, int var_2,int orden){
 	table* aux = NULL;
 	if(var_1 != NULL)
@@ -327,8 +326,7 @@ struct table* add_var_i(struct table *var_1, int var_2,int orden){
 	return aux;	
 }
 
-
-
+// Realiza una adicion de una variable y un recional
 struct table* add_var_f(struct table *var_1, float var_2,int orden){
 	if (orden==0){
 		table* aux = NULL;
@@ -375,6 +373,7 @@ struct table* add_var_f(struct table *var_1, float var_2,int orden){
 
 }
 
+// Potencia de una variable con una integral
 struct table* pow_var_i(struct table *var_1, int var_2,int orden){
 	if(orden ==0){
 			table* aux = NULL;
@@ -420,4 +419,44 @@ struct table* pow_var_i(struct table *var_1, int var_2,int orden){
 			return  aux;
 	}
 	
+}
+
+// SUma una variable con una cadena
+struct table* add_var_s(struct table *var_1, char * var_2){
+			table* aux = NULL;
+			if(var_1 != NULL)
+			{
+				aux = (table*)malloc(sizeof(table));
+				char* resultado;
+				if(var_1->tipo == 2)
+					resultado = conca(var_1->valor.s,var_2);
+				else
+				{
+					char* num = (char*)malloc(sizeof(char)*10);
+					sprintf(num, "%g", (var_1->tipo == 0) ? var_1->valor.e : var_1->valor.f);
+					resultado = conca(num,var_2);
+				}	
+				val.s = resultado;
+				aux->tipo = 2;
+				aux->valor = val;
+			}
+			return aux;
+}
+
+// Potencia con un base que es un string y el exponente una variable real
+struct table* pow_var_s(struct table *var_1, char * var_2){
+				table* aux = NULL;
+			if(var_1 != NULL && var_1->tipo != 2)
+			{
+				aux = (table*)malloc(sizeof(table));
+				char* resultado = (char*)malloc(sizeof(char)*1);
+				resultado[0] = '\n';
+				int i,fin = (var_1->tipo == 0) ? var_1->valor.e : var_1->valor.f;
+				for(i = 0; i < fin; i ++)
+					resultado = conca(var_2,resultado);
+				val.s = resultado;
+				aux->tipo = 2;
+				aux->valor = val;
+			}
+			return aux;
 }

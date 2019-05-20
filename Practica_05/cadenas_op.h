@@ -1,14 +1,12 @@
 // Regresa el tamaño de la cadena
-int size(char* cadena)
-{
+int size(char* cadena){
 	int tam = 0;
 	while(cadena[tam]){ tam ++; }
 	return tam;
 }
 
 // Concatena dos cadenas 
-char* conca(char* cadena_1,char* cadena_2)
-{
+char* conca(char* cadena_1,char* cadena_2){
 	int i = 0,j = 0,tam = (size(cadena_1) + size(cadena_2));
 	char* bufer = (char*)malloc(sizeof(char)*tam);
 	do
@@ -28,8 +26,7 @@ char* conca(char* cadena_1,char* cadena_2)
 }
 
 // Compara dos cadenas
-int comparation(char* cadena_1,char* cadena_2)
-{
+int comparation(char* cadena_1,char* cadena_2){
 	if(size(cadena_1) == size(cadena_2))
 	{
 		int i,bandera = 1;
@@ -47,10 +44,8 @@ int comparation(char* cadena_1,char* cadena_2)
 		return false;
 }
 
-
 // Obtiene la cadena
-char* lexema_aux (char* lex)
-{
+char* lexema_aux (char* lex){
 	char* temp = (char*)malloc(sizeof(char)*size(lex));
 	int i = 0;
 	while(lex[i] != 32 && lex[i] != 10 && lex[i] != 9
@@ -74,7 +69,6 @@ char* pow_s(char* cadena,int potencia){
 	return aux;
 }
 
-
 //Concatenacion de cadenas con enteros
 char* conca_i(char* cadena, int entero){
 	char* aux = (char*)malloc(sizeof(char)*1);
@@ -85,7 +79,6 @@ char* conca_i(char* cadena, int entero){
 	return aux;
 }
 
-
 //Concatenacion de cadenas con racionales
 char* conca_f(char* cadena, double racional){
 	char* aux = (char*)malloc(sizeof(char)*1);
@@ -95,5 +88,3 @@ char* conca_f(char* cadena, double racional){
 	aux= conca(cadena,num);
 	return aux;
 }
-
-

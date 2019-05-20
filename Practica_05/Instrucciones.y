@@ -33,16 +33,25 @@
 %left NEGATIVE
 %left POW '^' 
 
-/* Gramaticas */
+//-----------------------------------------------------------------------------------------
+//Comenzamos con la definicion del parser
+//-----------------------------------------------------------------------------------------
 %%
 
+
+
+//-----------------------------------------------------------------------------------------
+//Una linea puede estar vacia, contener espacioes en blanco o contener expresiones
+//-----------------------------------------------------------------------------------------
 input:	/* Cadena vacia */
 		| input line
 ;
 
 line: '\n'
 
-	/** Manejo de constantes **/
+//-----------------------------------------------------------------------------------------
+// Impresion de expresiones
+//-----------------------------------------------------------------------------------------	
 	| exp_i '\n' 					{printf("\tResultado: %d\n\n", $1); }
 	| exp_f '\n' 					{printf("\tResultado: %.8g\n\n", $1); }
 	| exp_c '\n' 					{printf("\tResultado: %s\n\n", $1); }
@@ -200,82 +209,10 @@ exp_Var: VARIABLE
 //-----------------------------------------------------------------------------------------
 //Expresiones con variables y cadenas
 //-----------------------------------------------------------------------------------------
-		| exp_Var '+' exp_c
-		{
-			table* aux = NULL;
-			if($1 != NULL)
-			{
-				aux = (table*)malloc(sizeof(table));
-				char* resultado;
-				if($1->tipo == 2)
-					resultado = conca($1->valor.s,$3);
-				else
-				{
-					char* num = (char*)malloc(sizeof(char)*10);
-					sprintf(num, "%g", ($1->tipo == 0) ? $1->valor.e : $1->valor.f);
-					resultado = conca(num,$3);
-				}	
-				val.s = resultado;
-				aux->tipo = 2;
-				aux->valor = val;
-			}
-			$$ = aux;
-		}
-		| exp_c '+' exp_Var
-		{
-			table* aux = NULL;
-			if($3 != NULL)
-			{
-				aux = (table*)malloc(sizeof(table));
-				char* resultado;
-				if($3->tipo == 2)
-					resultado = conca($1,$3->valor.s);
-				else
-				{
-					char* num = (char*)malloc(sizeof(char)*10);
-					sprintf(num, "%g", ($3->tipo == 0) ? $3->valor.e : $3->valor.f);
-					resultado = conca($1,num);
-				}	
-				val.s = resultado;
-				aux->tipo = 2;
-				aux->valor = val;
-			}
-			$$ = aux;	
-		}
-		| exp_c '^' exp_Var
-		{
-			table* aux = NULL;
-			if($3 != NULL && $3->tipo != 2)
-			{
-				aux = (table*)malloc(sizeof(table));
-				char* resultado = (char*)malloc(sizeof(char)*1);
-				resultado[0] = '\n';
-				int i,fin = ($3->tipo == 0) ? $3->valor.e : $3->valor.f;
-				for(i = 0; i < fin; i ++)
-					resultado = conca($1,resultado);
-				val.s = resultado;
-				aux->tipo = 2;
-				aux->valor = val;
-			}
-			$$ =  aux;
-		}
-		| POW '(' exp_c ',' exp_Var ')' ';'
-		{
-			table* aux = NULL;
-			if($5 != NULL && $5->tipo != 2)
-			{
-				aux = (table*)malloc(sizeof(table));
-				char* resultado = (char*)malloc(sizeof(char)*1);
-				resultado[0] = '\n';
-				int i,fin = ($5->tipo == 0) ? $5->valor.e : $5->valor.f;
-				for(i = 0; i < fin; i ++)
-					resultado = conca($3,resultado);
-				val.s = resultado;
-				aux->tipo = 2;
-				aux->valor = val;
-			}
-			$$ =  aux;
-		}
+		| exp_Var '+' exp_c						{ $$= add_var_s($1,$3);}
+		| exp_c '+' exp_Var						{ $$= add_var_s($3,$1);}
+		| exp_c '^' exp_Var						{ $$= pow_var_s($3,$1);}
+		| POW '(' exp_c ',' exp_Var ')' ';'		{ $$= pow_var_s($5,$3);}
 		| exp_Var '-' exp_c { $$ = NULL; }
 		| exp_c '-' exp_Var { $$ = NULL; }
 		| exp_Var '*' exp_c { $$ = NULL; }
