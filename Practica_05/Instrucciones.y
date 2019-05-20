@@ -40,100 +40,18 @@ input:	/* Cadena vacia */
 line: '\n'
 
 	/** Manejo de constantes **/
-	| exp_i '\n' 	{ printf("\tResultado: %d\n\n", $1); }
-	| exp_f '\n' 	{ printf("\tResultado: %.4g\n\n", $1); }
-	| exp_c '\n' 	{ printf("\tResultado: %s\n\n", $1); }
-	| exp_Var '\n'	{ buscar($1);}
-	| exp_Var ';' '\n'	{ buscar($1);}
-	| INT VARIABLE ';'
-	{
-		char* temp = lexema_aux($2);
-		val.e = 0;
-		if(add(temp,0,val) == false)
-			printf("\t\e[35mVariable previamente declarada\e[0m\n");
-		else
-			printf("\tResultado: %s = 0\n",temp);
-	}
-	| INT VARIABLE '=' exp_i';'
-	{
-		char* temp = lexema_aux($2);
-		val.e = $4;
-		if(add(temp,0,val) == false)
-			printf("\t\e[35mVariable previamente declarada\e[0m\n");
-		else
-			printf("\tResultado: %s = %d\n",temp,$4);
-	}
-	| VARIABLE '=' exp_i ';'
-	{
-		char* temp =  lexema_aux($1);
-		table* aux =  get_nodo(temp);
-		if(aux != NULL)
-		{
-			if(aux->tipo == 0)
-			{
-				val.e = $3;
-				aux->valor = val;
-				printf("\tResultado: %s = %d\n",temp,aux->valor.e);
-			}
-			else
-			{	
-				val.f = $3;
-				aux->valor = val;
-				printf("\tResultado: %s = %g\n",temp,aux->valor.f);
-			}
-		}
-		else
-			printf("\t\e[35mVariable no declarada\e[0m\n");
-	}
-
-		/** Manejo de variables flotantes **/
-	| FLOAT VARIABLE ';'
-	{
-		char* temp =  lexema_aux($2);
-		val.f = 0;
-		if(add(temp,1,val) == false)
-			printf("\t\e[35mVariable previamente declarada\e[0m\n");
-		else
-			printf("\tResultado: %s = 0\n",temp);
-	}
-	| FLOAT VARIABLE '=' exp_f';'
-	{
-		char* temp =  lexema_aux($2);
-		val.f = $4;
-		if(add(temp,1,val) == false)
-			printf("\t\e[35mVariable previamente declarada\e[0m\n");
-		else
-			printf("\tResultado: %s = %g\n",temp,$4);
-	}
-	| FLOAT VARIABLE '=' exp_i';'
-	{
-		char* temp = lexema_aux($2);
-		val.f = $4;
-		if(add(temp,1,val) == false)
-			printf("\t\e[35mVariable previamente declarada\e[0m\n");
-		else
-			printf("\tResultado: %s = %d\n",temp,$4);
-	}
-	| VARIABLE '=' exp_f ';'
-	{
-		char* temp = lexema_aux($1);
-		table* aux =  get_nodo(temp);
-		val.f = $3;
-		if(aux != NULL)
-		{
-			if(aux->tipo == 1)
-			{
-				aux->valor.f = $3;
-				printf("\tResultado: %s = %f\n",temp,aux->valor.f);
-			}
-			else
-			{	
-				printf("\t\e[35mTipo de dato incompatible\e[0m\n");
-			}
-		}
-		else
-			printf("\t\e[35mVariable no declarada\e[0m\n");
-	}
+	| exp_i '\n' 					{printf("\tResultado: %d\n\n", $1); }
+	| exp_f '\n' 					{printf("\tResultado: %.8g\n\n", $1); }
+	| exp_c '\n' 					{printf("\tResultado: %s\n\n", $1); }
+	| exp_Var '\n'					{print_var($1);}
+	| exp_Var ';' '\n'				{print_var($1);}
+	| INT VARIABLE ';'				{declaration_var($2,0,0);}
+	| INT VARIABLE '=' exp_i';'		{declaration_var($2,$4,0);}
+	| FLOAT VARIABLE ';'			{declaration_var($2,0,1);}
+	| FLOAT VARIABLE '=' exp_f';'	{declaration_var($2,$4,1);}
+	| FLOAT VARIABLE '=' exp_i';'	{declaration_var($2,$4,1);}
+	| VARIABLE '=' exp_i ';'		{change_val($1,$3,0);}
+	| VARIABLE '=' exp_f ';'		{change_val($1,$3,1);}
 
 		/** Manejo de variables string **/
 	| STRING VARIABLE ';'

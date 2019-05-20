@@ -19,7 +19,7 @@ table *ultimo = NULL;
 
 union Data val;
 
-/**Regresa el nodo de un lexema**/
+//Regresa el nodo de un lexema
 table* get_nodo(char* lexema)
 {
 	int i;
@@ -124,9 +124,8 @@ void mostrar()
 	}
 }
 
-/** Obtiene el valor flotante**/
-float val_flot(table* a)
-{
+//Obtiene el valor de un flotante 
+float val_flot(table* a){
 	float aux = 0;
 	switch(a->tipo)
 	{
@@ -140,9 +139,8 @@ float val_flot(table* a)
 	return aux;
 }
 
-/** Realiza operaciones **/
-table* operacion(table* variable,float num,int orden,int operacion)
-{
+//Realiza operaciones y almacena resultados de ser necesario
+table* operacion(table* variable,float num,int orden,int operacion){
 	table* aux = NULL;
 	if(variable != NULL && variable->tipo != 2)
 	{
@@ -213,7 +211,7 @@ table* operacion(table* variable,float num,int orden,int operacion)
 }
 
 
-void buscar(struct table* numero){
+void print_var(struct table* numero){
 	table* aux = numero;
 		if(aux != NULL)
 		{
@@ -233,4 +231,70 @@ void buscar(struct table* numero){
 		else
 			printf("\t\e[35mOperacion no valida\e[0m\n");
 
+}
+
+void declaration_var(char* variable, double valor, int tipo_var){
+	int valor_int =(int)valor;
+	if (tipo_var == 0){
+		char* temp = lexema_aux(variable);
+		val.e = valor_int;
+		if(add(temp,0,val) == false)
+			printf("\t\e[35mVariable previamente declarada\e[0m\n");
+		else
+			printf("\tResultado: %s = %d\n",temp,valor_int);
+	}
+
+	else{
+		char* temp =  lexema_aux(variable);
+		val.f = valor;
+		if(add(temp,1,val) == false)
+			printf("\t\e[35mVariable previamente declarada\e[0m\n");
+		else
+			printf("\tResultado: %s = %g\n",temp,valor);
+	}
+}
+
+// Cambio del valor de la variable, tiene que estar previamente declarada
+void change_val(char* variable, double valor,int tipo_val){
+	int valor_int =(int)valor;
+	if (tipo_val == 0){
+		char* temp =  lexema_aux(variable);
+		table* aux =  get_nodo(temp);
+		if(aux != NULL)
+		{
+			if(aux->tipo == 0)
+			{
+				val.e = valor_int;
+				aux->valor = val;
+				printf("\tResultado: %s = %d\n",temp,aux->valor.e);
 			}
+			else
+			{	
+				val.f = valor_int;
+				aux->valor = val;
+				printf("\tResultado: %s = %g\n",temp,aux->valor.f);
+			}
+		}
+		else
+			printf("\t\e[35mVariable no declarada\e[0m\n");
+	}
+	else{
+		char* temp = lexema_aux(variable);
+		table* aux =  get_nodo(temp);
+		val.f = valor;
+		if(aux != NULL)
+		{
+			if(aux->tipo == 1)
+			{
+				aux->valor.f = valor;
+				printf("\tResultado: %s = %f\n",temp,aux->valor.f);
+			}
+			else
+			{	
+				printf("\t\e[35mTipo de dato incompatible\e[0m\n");
+			}
+		}
+		else
+			printf("\t\e[35mVariable no declarada\e[0m\n");
+	}
+}
