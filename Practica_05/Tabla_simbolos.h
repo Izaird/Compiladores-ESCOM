@@ -1,20 +1,15 @@
-#define true 1
-#define false 0
-
-/*union Data {
+union Data {
    int e;
    float f;
-};*/
+   char* s;
+};
 
 typedef struct table
 {
 	int id;
 	int tipo;
 	char* lexema;
-	//union Data valor;
-	int valor_e;
-	float valor_f;
-	
+	union Data valor;
 	struct table *siguiente;
 	struct table *anterior;
 }table; 
@@ -22,56 +17,7 @@ typedef struct table
 table *primero = NULL;
 table *ultimo = NULL;
 
-//union Data val;
-
-/**Regresa el tamaño de una cadena**/
-int size(char* cadena)
-{
-	int tam = 0;
-	while(cadena[tam]){ tam ++; }
-	return tam;
-}
-
-/**Concatenacion de dos cadenas**/
-char* conca(char* cadena_1,char* cadena_2)
-{
-	int i = 0,j = 0,tam = (size(cadena_1) + size(cadena_2));
-	char* bufer = (char*)malloc(sizeof(char)*tam);
-	do
-	{
-		bufer[j] = cadena_1[i];
-		i ++;
-		j ++;
-	}while(cadena_1[i] != '\0');
-	i = 0;
-	do
-	{
-		bufer[j] = cadena_2[i];
-		i ++;
-		j ++;
-	}while(cadena_2[i] != '\0');
-	return bufer;
-}
-
-/**Compara dos cadenas**/
-int comparation(char* cadena_1,char* cadena_2)
-{
-	if(size(cadena_1) == size(cadena_2))
-	{
-		int i,bandera = 1;
-		for(i = 0; i <= size(cadena_1); i ++)
-		{
-			if(cadena_1[i] != cadena_2[i])
-				bandera = 0;
-		}	
-		if(bandera == 1)
-			return true;
-		else
-			return false;
-	}
-	else
-		return false;
-}
+union Data val;
 
 /**Regresa el nodo de un lexema**/
 table* get_nodo(char* lexema)
@@ -91,7 +37,7 @@ table* get_nodo(char* lexema)
 /**Regresa el id de un lexema**/
 int get_id(char* lexema)
 {
-	int i=0;
+	int i = 0;
 	if(primero != NULL)
 	{
 		table *aux = primero;
@@ -108,7 +54,7 @@ int get_id(char* lexema)
 }
 
 /**Agrega elemento a la tabla de simbolos**/
-int add(char* lexema,int tipo,int val_i,float val_f)//union Data val_entrada)
+int add(char* lexema,int tipo,union Data val_entrada)
 {
 	int i = get_id(lexema);
 	if(i == -1 || i == -2)
@@ -116,11 +62,7 @@ int add(char* lexema,int tipo,int val_i,float val_f)//union Data val_entrada)
 		table *nodo = (table*)malloc(sizeof(table));
 		nodo->lexema = lexema;
 		nodo->tipo = tipo;
-
-
-		nodo->valor_e = val_i;
-		nodo->valor_f = val_f;
-		//nodo->valor = val_entrada;
+		nodo->valor = val_entrada;
 		
 		if(primero == NULL)
 		{
@@ -169,10 +111,10 @@ void mostrar()
 		switch(aux->tipo)
 		{
 			case 0:
-				printf("int   %d\n",aux->valor_e);
+				printf("int   %d\n",aux->valor.e);
 			break;
 			case 1:
-				printf("float   %g\n",aux->valor_f);
+				printf("float   %g\n",aux->valor.f);
 			break;
 			default:
 				printf("Desconocido\n");
@@ -182,3 +124,90 @@ void mostrar()
 	}
 }
 
+/** Obtiene el valor flotante**/
+float val_flot(table* a)
+{
+	float aux = 0;
+	switch(a->tipo)
+	{
+		case 0:
+			aux = a->valor.e;
+		break;
+		case 1:
+			aux = a->valor.f;
+		break;
+	}
+	return aux;
+}
+
+/** Realiza operaciones **/
+table* operacion(table* variable,float num,int orden,int operacion)
+{
+	table* aux = NULL;
+	if(variable != NULL && variable->tipo != 2)
+	{
+		aux = (table*)malloc(sizeof(table));
+		if(orden == 0)
+		{
+			switch(operacion)
+			{
+				case 0: // suma
+					val.f = ((variable->tipo == 0) ? variable->valor.e : variable->valor.f) + num;
+					aux->tipo = 1;
+					aux->valor = val;
+				break;
+				case 1:// resta
+					val.f = ((variable->tipo == 0) ? variable->valor.e : variable->valor.f) - num;
+					aux->tipo = 1;
+					aux->valor = val;
+				break;
+				case 2:// division
+					val.f = ((variable->tipo == 0) ? variable->valor.e : variable->valor.f) / num;
+					aux->tipo = 1;
+					aux->valor = val;
+				break;
+				case 3: // multiplicacion
+					val.f = ((variable->tipo == 0) ? variable->valor.e : variable->valor.f) * num;
+					aux->tipo = 1;
+					aux->valor = val;
+				break;
+				case 4:// potencia
+					val.f = pow(((variable->tipo == 0) ? variable->valor.e : variable->valor.f),num);
+					aux->tipo = 1;
+					aux->valor = val;
+				break;
+			}
+		}else
+		{
+			switch(operacion)
+			{
+				case 0: // suma
+					val.f = num + ((variable->tipo == 0) ? variable->valor.e : variable->valor.f);
+					aux->tipo = 1;
+					aux->valor = val;
+				break;
+				case 1:// resta
+					val.f = num - ((variable->tipo == 0) ? variable->valor.e : variable->valor.f);
+					aux->tipo = 1;
+					aux->valor = val;
+				break;
+				case 2:// division
+					val.f = num / ((variable->tipo == 0) ? variable->valor.e : variable->valor.f);
+					aux->tipo = 1;
+					aux->valor = val;
+				break;
+				case 3: // multiplicacion
+					val.f = num * ((variable->tipo == 0) ? variable->valor.e : variable->valor.f);
+					aux->tipo = 1;
+					aux->valor = val;
+				break;
+				case 4:// potencia
+					val.f = pow(num,((variable->tipo == 0) ? variable->valor.e : variable->valor.f));
+					aux->tipo = 1;
+					aux->valor = val;
+				break;
+			}
+		}	
+	}
+	return aux;
+}
