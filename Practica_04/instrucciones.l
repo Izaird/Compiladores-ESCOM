@@ -27,7 +27,7 @@ potencia [pP][Oo][Ww]
 ({numero})(".")({numero})    {
                             printf("Numero flotante %s\n",yytext);
                             yylval.flotante = strtod(yytext, NULL);
-                            return (FLOTANTE);
+                            return (RACIONAL);
                         }
 
 \"([^"]*)\"             {
