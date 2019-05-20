@@ -233,6 +233,8 @@ void print_var(struct table* numero){
 
 }
 
+
+// Declaracion de una variable numerica
 void declaration_var(char* variable, double valor, int tipo_var){
 	int valor_int =(int)valor;
 	if (tipo_var == 0){
@@ -297,4 +299,43 @@ void change_val(char* variable, double valor,int tipo_val){
 		else
 			printf("\t\e[35mVariable no declarada\e[0m\n");
 	}
+}
+
+void declaration_var_s(char* variable, char* valor){
+	if (valor==0){
+		char* temp = lexema_aux(variable);
+		char* cad = (char*)malloc(1);
+		cad[0] = '\0';
+		val.s = cad;
+		if(add(temp,2,val) == false)
+			printf("\t\e[35mVariable previamente declarada\e[0m\n");
+		else
+			printf("\tResultado: %s\n",temp);
+	}
+	else{
+		char* temp = lexema_aux(variable);
+		val.s = valor;
+		if(add(temp,2,val) == false)
+			printf("\t\e[35mVariable previamente declarada\e[0m\n");
+		else
+			printf("\tResultado: %s = %s\n",temp,valor);
+	}
+}
+
+void change_val_s(char* variable, char* valor){
+		char* temp =  lexema_aux(variable);
+		table* aux =  get_nodo(temp);
+		if(aux != NULL)
+		{
+			if(aux->tipo == 2)
+			{
+				val.s = valor;
+				aux->valor = val;
+				printf("\tResultado: %s = %s\n",temp,aux->valor.s);
+			}
+			else
+				printf("\t\e[35mTipos de dato incompatible\e[0m\n");
+		}
+		else
+			printf("\t\e[35mVariable no declarada\e[0m\n");
 }

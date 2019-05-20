@@ -54,7 +54,7 @@ variable [A-Za-z_]+[0-9a-zA-Z_]*
 
 {potencia} 	{
 	// printf("Potencia\n");
-	return (POTENCIA);
+	return (POW);
 	}
 
 {if} 	{
@@ -89,6 +89,7 @@ variable [A-Za-z_]+[0-9a-zA-Z_]*
 		                    // printf("Signo: %s\n",yytext);
                             return (yytext[0]);
                 }
+
 
 
 

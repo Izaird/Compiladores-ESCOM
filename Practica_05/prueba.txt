@@ -1,5 +1,5 @@
 int a;
-a = 1;
+a = 3;
 a = 1.2;
 a = "asdfa";
 int b = 10;
@@ -19,3 +19,10 @@ float e = 10;
 e = 1;
 e = 1.2;
 e = "asdfa";
+string cadena_01= "Prueba";
+cadena_01="Hola";
+string cadena_02= " mundo ";
+(cadena_01+cadena_02)^3
+string cadena_03;
+cadena_03^100
+PoW(3,4.3);

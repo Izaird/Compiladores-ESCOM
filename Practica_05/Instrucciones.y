@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "auxiliares.h"
-#include "Tabla_simbolos.h"
+#include "cadenas_op.h"
+#include "tabla_sim.h"
 %}
 
 /*Declaraciones de Bison*/
@@ -17,18 +17,18 @@
 }
 
 %token <entero> ENTERO
-%type <entero> exp_i
+%type <entero> exp_i term
 %token <flotante> RACIONAL
-%type <flotante> exp_f
+%type <flotante> exp_f termf
 %token <cadena> CADENA
 %type <cadena> exp_c
 %token <cadena> VARIABLE
-%token IF INT FLOAT STRING POTENCIA
+%token IF INT FLOAT STRING POW
 %type <Tabla_S> exp_Var
 %left '+' '-'
 %left '*' '/' 
 %left NEGATIVE
-%left POTENCIA '^'
+%left POW '^' 
 
 /* Gramaticas */
 %%
@@ -45,106 +45,75 @@ line: '\n'
 	| exp_c '\n' 					{printf("\tResultado: %s\n\n", $1); }
 	| exp_Var '\n'					{print_var($1);}
 	| exp_Var ';' '\n'				{print_var($1);}
+//-----------------------------------------------------------------------------------------
+//Declaracion de variables numericas
+//-----------------------------------------------------------------------------------------
 	| INT VARIABLE ';'				{declaration_var($2,0,0);}
 	| INT VARIABLE '=' exp_i';'		{declaration_var($2,$4,0);}
 	| FLOAT VARIABLE ';'			{declaration_var($2,0,1);}
 	| FLOAT VARIABLE '=' exp_f';'	{declaration_var($2,$4,1);}
 	| FLOAT VARIABLE '=' exp_i';'	{declaration_var($2,$4,1);}
+//-----------------------------------------------------------------------------------------
+//Cambio de valor de una variable numericas previamente declarada
+//-----------------------------------------------------------------------------------------
 	| VARIABLE '=' exp_i ';'		{change_val($1,$3,0);}
 	| VARIABLE '=' exp_f ';'		{change_val($1,$3,1);}
+//-----------------------------------------------------------------------------------------
+//Declaracion de variables tipo cadena
+//-----------------------------------------------------------------------------------------
+	| STRING VARIABLE ';'			{declaration_var_s($2,0);}
+	| STRING VARIABLE'='exp_c ';'	{declaration_var_s($2,$4);}
+//-----------------------------------------------------------------------------------------
+//Cambio de valor de variable tipo cadena
+//-----------------------------------------------------------------------------------------
+	| VARIABLE '=' exp_c ';'		{change_val_s($1,$3);}
 
-		/** Manejo de variables string **/
-	| STRING VARIABLE ';'
-	{
-		char* temp = lexema_aux($2);
-		char* cad = (char*)malloc(1);
-		cad[0] = '\0';
-		val.s = cad;
-		if(add(temp,2,val) == false)
-			printf("\t\e[35mVariable previamente declarada\e[0m\n");
-		else
-			printf("\tResultado: %s\n",temp);
-	}
-	| STRING VARIABLE '=' exp_c ';'
-	{
-		char* temp = lexema_aux($2);
-		val.s = $4;
-		if(add(temp,2,val) == false)
-			printf("\t\e[35mVariable previamente declarada\e[0m\n");
-		else
-			printf("\tResultado: %s = %s\n",temp,$4);
-	}
-	| VARIABLE '=' exp_c ';'
-	{
-		char* temp =  lexema_aux($1);
-		table* aux =  get_nodo(temp);
-		if(aux != NULL)
-		{
-			if(aux->tipo == 2)
-			{
-				val.s = $3;
-				aux->valor = val;
-				printf("\tResultado: %s = %s\n",temp,aux->valor.s);
-			}
-			else
-				printf("\t\e[35mTipos de dato incompatible\e[0m\n");
-		}
-		else
-			printf("\t\e[35mVariable no declarada\e[0m\n");
-	}
-
-	/** Control de condicionales **/
-	| IF '(' exp_i '>' exp_i ')' ';' '\n' 
-	{ 
+//-----------------------------------------------------------------------------------------
+//Condicionales
+//-----------------------------------------------------------------------------------------
+	| IF '(' exp_i '>' exp_i ')' ';' '\n' { 
 		if($3 > $5)
 			printf("\tTRUE\n\n");
 		else
 			printf("\tFALSE\n\n");
 	}
-	| IF '(' exp_i '<' exp_i ')' ';' '\n' 
-	{ 
+	| IF '(' exp_i '<' exp_i ')' ';' '\n' { 
 		if($3 < $5)
 			printf("\tTRUE\n\n");
 		else
 			printf("\tFALSE\n\n");
 	}
-	| IF '(' exp_f '>' exp_i ')' ';' '\n' 
-	{ 
+	| IF '(' exp_f '>' exp_i ')' ';' '\n' { 
 		if($3 > $5)
 			printf("\tTRUE\n\n");
 		else
 			printf("\tFALSE\n\n");
 	}
-	| IF '(' exp_f '<' exp_i ')' ';' '\n' 
-	{ 
+	| IF '(' exp_f '<' exp_i ')' ';' '\n' { 
 		if($3 < $5)
 			printf("\tTRUE\n\n");
 		else
 			printf("\tFALSE\n\n");
 	}
-	| IF '(' exp_i '>' exp_f ')' ';' '\n' 
-	{ 
+	| IF '(' exp_i '>' exp_f ')' ';' '\n' { 
 		if($3 > $5)
 			printf("\tTRUE\n\n");
 		else
 			printf("\tFALSE\n\n");
 	}
-	| IF '(' exp_i '<' exp_f ')' ';' '\n' 
-	{ 
+	| IF '(' exp_i '<' exp_f ')' ';' '\n' { 
 		if($3 < $5)
 			printf("\tTRUE\n\n");
 		else
 			printf("\tFALSE\n\n");
 	}
-	| IF '(' exp_f '>' exp_f ')' ';' '\n' 
-	{ 
+	| IF '(' exp_f '>' exp_f ')' ';' '\n' { 
 		if($3 > $5)
 			printf("\tTRUE\n\n");
 		else
 			printf("\tFALSE\n\n");
 	}
-	| IF '(' exp_f '<' exp_f ')' ';' '\n' 
-	{ 
+	| IF '(' exp_f '<' exp_f ')' ';' '\n' { 
 		if($3 < $5)
 			printf("\tTRUE\n\n");
 		else
@@ -152,49 +121,61 @@ line: '\n'
 	}
 ;
 
-/** Expresion que usa numeros enteros **/
-exp_i: ENTERO {	$$ = $1; }
-	| '-' exp_i { $$ = -$2; }
-	| '(' exp_i ')'	{ $$ = $2; }
-	| exp_i '+' exp_i	{ $$ = $1 + $3; }
-	| exp_i '-' exp_i	{ $$ = $1 - $3; }
-	| exp_i '*' exp_i	{ $$ = $1 * $3; }
-	| exp_i '/' exp_i	{ $$ = $1 / $3; }
-	| POTENCIA '(' exp_i ',' exp_i ')' ';' { $$ = pow($3,$5);}
-;
+//-----------------------------------------------------------------------------------------
+//Expresiones con numeros enteros
+//-----------------------------------------------------------------------------------------
+exp_i:  term					{ $$ = $1;         	}
+    |     exp_i '+' exp_i				{ $$ = $1 + $3;    	}
+    |     exp_i '-' exp_i				{ $$ = $1 - $3;    	}
+    |     exp_i '*' exp_i				{ $$ = $1 * $3;    	}
+    |     exp_i '/' exp_i				{ $$ = $1 / $3;    	}
+    |     '-' exp_i  %prec NEGATIVE		{ $$ = - $2;       	}
+    |     POW   '(' term ',' term ')'';' 	{ $$ = pow($3,$5); 	}
+    ;
+
+//-----------------------------------------------------------------------------------------
+//Expresiones con numeros racionales
+//-----------------------------------------------------------------------------------------
+exp_f:  termf								{ $$ = $1;         	}
+    |     exp_f '+' exp_f					{ $$ = $1 + $3;    	}
+    |     exp_f '+' exp_i					{ $$ = $1 + $3;    	}
+    |     exp_i  '+' exp_f					{ $$ = $1 + $3;    	}
+    |     exp_f '-' exp_f					{ $$ = $1 - $3;    	}
+    |     exp_f '-' exp_i					{ $$ = $1 - $3;    	}
+    |     exp_i  '-' exp_f					{ $$ = $1 - $3;    	}
+    |     exp_f '*' exp_f					{ $$ = $1 * $3;    	}
+    |     exp_f '*' exp_i 					{ $$ = $1 * $3;    	}
+    |     exp_i  '*' exp_f					{ $$ = $1 * $3;    	}
+    |     exp_f '/' exp_f					{ $$ = $1 / $3;    	}
+    |     exp_f '/' exp_i					{ $$ = $1 / $3;    	}
+    |     exp_i  '/' exp_f					{ $$ = $1 / $3;    	}
+    |     '-' exp_f  %prec NEGATIVE			{ $$ = - $2;       	}
+    |     POW   '(' termf ',' termf ')' ';'	{ $$ = pow($3,$5); 	}
+    |     POW   '(' termf ',' term ')' ';'	{ $$ = pow($3,$5); 	}
+    |     POW   '(' term ',' termf ')' ';'	{ $$ = pow($3,$5); 	}
+    ;
+
+//-----------------------------------------------------------------------------------------
+// Se tiene que especificar lo siguiente para los tokens con mayor precedencia
+// puedan ser distinguidos correctamente y cosas como pow() funcionen
+//-----------------------------------------------------------------------------------------
+
+termf:     RACIONAL							{ $$ = $1;         	}
+    |     '(' exp_f ')'						{ $$ = $2;         	}
+    ;
 
 
-/** Expresion que usa numeros racionales **/
-exp_f: RACIONAL {	$$ = $1; }
-	| '-' exp_f	{$$ = -$2; }
-	| '(' exp_f ')'	{ $$ = $2; }
-	| exp_f '+' exp_f	{ $$ = $1 + $3; }
-	| exp_f '-' exp_f	{ $$ = $1 - $3; }
-	| exp_f '*' exp_f	{ $$ = $1 * $3; }
-	| exp_f '/' exp_f	{ $$ = $1 / $3; }
-	| exp_i '+' exp_f {$$ = $1 + $3; }
-	| exp_i '-' exp_f {$$ = $1 - $3; }
-	| exp_i '*' exp_f {$$ = $1 * $3; }
-	| exp_i '/' exp_f {$$ = $1 / $3; }
-	| exp_f '+' exp_i {$$ = $1 + $3; }
-	| exp_f '-' exp_i {$$ = $1 - $3; }
-	| exp_f '*' exp_i {$$ = $1 * $3; }
-	| exp_f '/' exp_i {$$ = $1 / $3; }
-	| POTENCIA '(' exp_f ',' exp_f ')' ';' { $$ = pow($3,$5);}
-	| POTENCIA '(' exp_f ',' exp_i ')' ';' { $$ = pow($3,$5);}
-	| POTENCIA '(' exp_i ',' exp_f ')' ';' { $$ = pow($3,$5);}
-;
+term:     ENTERO							{ $$ = $1;         	}
+    |     '(' exp_i ')'						{ $$ = $2;        	}
+    ;
+
 
 
 /** Expresion que usa cadenas **/
 exp_c: CADENA {	$$ = $1; }
 	| '(' exp_c ')'	{ $$ = $2; }
-	| exp_c '+' exp_c
-	{
-		$$ = conca($1,$3);
-	}
-	| exp_c '^' exp_i
-	{
+	| exp_c '+' exp_c						{$$ = conca($1,$3);}
+	| exp_c '^' exp_i						{
 		char* aux = (char*)malloc(sizeof(char)*1);
 		aux[0] = '\n';
 		int i;
@@ -202,7 +183,7 @@ exp_c: CADENA {	$$ = $1; }
 			aux = conca($1,aux);
 		$$ = aux;
 	}
-	| POTENCIA '(' exp_c ',' exp_i ')' ';'
+	| POW '(' exp_c ',' exp_i ')' ';'
 	{
 		char* aux = (char*)malloc(sizeof(char)*1);
 		aux[0] = '\n';
@@ -347,7 +328,7 @@ exp_Var: VARIABLE
 			}
 			$$ =  aux;
 		}
-		| POTENCIA '(' exp_Var ',' exp_Var ')' ';'
+		| POW '(' exp_Var ',' exp_Var ')' ';'
 		{
 			table* aux = NULL;
 			if($3 != NULL && $5 != NULL)
@@ -438,7 +419,7 @@ exp_Var: VARIABLE
 			$$ = aux;
 		}
 		| exp_i '^' exp_Var { $$ = operacion($3,$1,1,4); }
-		| POTENCIA '(' exp_Var ',' exp_i ')' ';'
+		| POW '(' exp_Var ',' exp_i ')' ';'
 		{
 			table* aux = NULL;
 			if($3 != NULL)
@@ -460,7 +441,7 @@ exp_Var: VARIABLE
 			}
 			$$ = aux;
 		}
-		| POTENCIA '(' exp_i ',' exp_Var ')' ';' { $$ = operacion($5,$3,1,4); }
+		| POW '(' exp_i ',' exp_Var ')' ';' { $$ = operacion($5,$3,1,4); }
 		| exp_Var '-' exp_i { $$ = operacion($1,$3,0,1); }
 		| exp_i '-' exp_Var { $$ = operacion($3,$1,1,1); }
 		| exp_Var '*' exp_i { $$ = operacion($1,$3,0,3); }
@@ -533,7 +514,7 @@ exp_Var: VARIABLE
 			$$ = aux;
 		}
 		| exp_f '^' exp_Var { $$ = operacion($3,$1,1,4); }
-		| POTENCIA '(' exp_Var ',' exp_f ')' ';'
+		| POW '(' exp_Var ',' exp_f ')' ';'
 		{
 			table* aux = NULL;
 			if($3 != NULL)
@@ -555,7 +536,7 @@ exp_Var: VARIABLE
 			}
 			$$ = aux;
 		}
-		| POTENCIA '(' exp_f ',' exp_Var ')' ';' { $$ = operacion($5,$3,1,4); }
+		| POW '(' exp_f ',' exp_Var ')' ';' { $$ = operacion($5,$3,1,4); }
 		| exp_Var '-' exp_f { $$ = operacion($1,$3,0,1); }
 		| exp_f '-' exp_Var { $$ = operacion($3,$1,1,1); }
 		| exp_Var '*' exp_f { $$ = operacion($1,$3,0,3); }
@@ -622,7 +603,7 @@ exp_Var: VARIABLE
 			}
 			$$ =  aux;
 		}
-		| POTENCIA '(' exp_c ',' exp_Var ')' ';'
+		| POW '(' exp_c ',' exp_Var ')' ';'
 		{
 			table* aux = NULL;
 			if($5 != NULL && $5->tipo != 2)
@@ -646,7 +627,7 @@ exp_Var: VARIABLE
 		| exp_Var '/' exp_c { $$ = NULL; }
 		| exp_c '/' exp_Var { $$ = NULL; }
 		| exp_Var '^' exp_c { $$ = NULL; }
-		| POTENCIA '(' exp_Var ',' exp_c ')' ';'{ $$ = NULL; }
+		| POW '(' exp_Var ',' exp_c ')' ';'{ $$ = NULL; }
 ;
 
 %%
