@@ -23,7 +23,7 @@ string cadena_01= "Prueba";
 cadena_01="Hola";
 string cadena_02= " mundo ";
 (cadena_01+cadena_02)^3
-pow(cadena_01,10);
+pow(cadena_01,10.3);
 string cadena_03;
 cadena_03^100
 PoW(3,4.3);

@@ -122,7 +122,7 @@ void change_val_s(char* variable, char* valor){
 				printf("\tResultado: %s = %s\n",temp,aux->valor.s);
 			}
 			else
-				printf("\t\e[35mTipos de dato incompatible\e[0m\n");
+				printf("\t\e[35mTipo de dato incompatible\e[0m\n");
 		}
 		else
 			printf("\t\e[35mVariable no declarada\e[0m\n");
