@@ -15,7 +15,7 @@
 }
 
 %token <entero> ENTERO
-%token <flotante> REAL
+%token <flotante> RACIONAL
 %token <cadena> CADENA
 %token <cadena> VARIABLE
 %token IF
@@ -288,8 +288,8 @@ exp_i: ENTERO {	$$ = $1; }
 ;
 
 
-/** Expresion que usa numeros reales **/
-exp_f: REAL {	$$ = $1; }
+/** Expresion que usa numeros racionales **/
+exp_f: RACIONAL {	$$ = $1; }
 	| '-' exp_f	{$$ = -$2; }
 	| '(' exp_f ')'	{ $$ = $2; }
 	| exp_f '+' exp_f	{ $$ = $1 + $3; }

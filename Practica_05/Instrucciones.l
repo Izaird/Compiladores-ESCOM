@@ -1,137 +1,98 @@
 %{
-	#include <stdio.h>
-	#include "y.tab.h"
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <math.h>
+#include "y.tab.h"
+
+extern int lineno;        /* Actual numero de linea  */
+extern YYSTYPE yylval;    /* Valor numerico del token */
 %}
 
-NUM [0-9]+
-Real [0-9]*"."[0-9]+
-Variable [A-Za-z_]+[0-9a-zA-Z_]*
-Cadena \"([^"]*)\"
+numero [0-9]+
+espacio [ \t]
+potencia [pP][Oo][Ww]
+if [Ii][Ff]
+int [Ii][Nn][Tt]
+float [Ff][Ll][Oo][Aa][Tt]
+string [Ss][Tt][Rr][Ii][Nn][Gg]
+variable [A-Za-z_]+[0-9a-zA-Z_]*
+
 
 %%
 
-{Real}	{
-	//printf("Numero real: %s\n",yytext);
-	yylval.flotante = strtof(yytext, NULL);
-	return (REAL);
-	}
+{espacio}               { ; }    /* espacios son ignorados */
 
-{NUM} {
-	//printf("Numero entero: %s\n",yytext);
-	yylval.entero = atoi(yytext);
-	return (ENTERO);
-	}
 
-{Cadena} {
-	int size = 0,i = 0;
-	while(yytext[size]){ size ++; }
-	char *aux  = NULL;
-	aux = (char*)malloc(size - 1);
-	while(yytext[i + 2])
-	{
-		aux[i] = yytext[i + 1];
-		i ++;
-	}
-	aux[i + 1] = '\0';
-	//printf("Cadena: %s\n",aux);
-	yylval.cadena = aux;
-	return (CADENA);
-	}
+{numero}                   {
+                            printf("Numero entero %s\n",yytext);
+                            yylval.entero = atoi(yytext);
+                            return (ENTERO);
+                        }
 
-[Pp][Oo][Ww]	{
-	//printf("Potencia\n");
+({numero})(".")({numero})    {
+                            printf("Numero flotante %s\n",yytext);
+                            yylval.flotante = strtod(yytext, NULL);
+                            return (RACIONAL);
+                        }
+
+\"([^"]*)\"             {
+                            int i = 0;
+                            char *str = NULL;
+                            str = (char *) malloc(yyleng-1);
+                            yylval.cadena = str;
+                            yytext++;
+                            for(i = 0; i < yyleng-2; i++){
+                                *str = *yytext;
+                                str++;
+                                yytext++;
+                            }
+                            *str = '\0';
+                            printf("Cadena: %s\n", yylval.cadena);
+                            return(CADENA);
+                        }
+
+{potencia} 	{
+	printf("Potencia\n");
 	return (POTENCIA);
 	}
 
-[Ii][Ff]	{
-	//printf("Comparacion\n");
+{if} 	{
+	printf("Comparacion\n");
 	return (IF);
 	}
 
 
-[Ii][Nn][Tt]	{
-	//printf("Declaracion entera\n");
+{int} 	{
+	printf("Declaracion entera\n");
 	return (INT);
 	}
 
-[Ff][Ll][Oo][Aa][Tt]	{
-	//printf("Declaracion flotante\n");
+{float} 	{
+	printf("Declaracion flotante\n");
 	return (FLOAT);
 	}
 
-[Ss][Tt][Rr][Ii][Nn][Gg]	{
+{string} 	{
 	printf("Declaracion string\n");
 	return (STRING);
 	}
 
-"+" {
-	//printf("Simbolo: %s\n",&yytext[0]);
-	return(yytext[0]);
-	}
 
-"-"  {
-	//printf("Simbolo: %s\n",&yytext[0]);
-	return(yytext[0]);
-	}
-
-"^" {
-	//printf("Simbolo: %s\n",&yytext[0]);
-	return(yytext[0]);
-	}
-
-"*" {
-	//printf("Simbolo: %s\n",&yytext[0]);
-	return(yytext[0]);
-	}
-
-">" {
-	//printf("Simbolo: %s\n",&yytext[0]);
-	return(yytext[0]);
-	}
-
-"<" {
-	//printf("Simbolo: %s\n",&yytext[0]);
-	return(yytext[0]);
-	}
-
-"/" {
-	//printf("Simbolo: %s\n",&yytext[0]);
-	return(yytext[0]);
-	}
-
-"=" {
-	//printf("Simbolo: %s\n",&yytext[0]);
-	return(yytext[0]);
-	}
-
-"(" {
-	//printf("Simbolo: %s\n",&yytext[0]);
-	return(yytext[0]);
-	}
-
-")" {
-	//printf("Simbolo: %s\n",&yytext[0]);
-	return(yytext[0]);
-	}
-
-"," {
-	//printf("Simbolo: %s\n",&yytext[0]);
-	return(yytext[0]);
-	}
-
-";"  {
-	//printf("Simbolo: %s\n",&yytext[0]);
-	return(yytext[0]);
-	}
-
-
-
-
-{Variable}	{
-	//printf("Variable: %s\n",yytext);
+{variable}	{
+	printf("Variable: %s\n",yytext);
 	yylval.cadena = yytext;
 	return(VARIABLE);
 	}
+                        
+"+"|"-"|"/"|"*"|"^"|"("|")"|"="|"<"|">"|","|";"	 	{
+		                    printf("Signo: %s\n",yytext);
+                            return (yytext[0]);
+                }
+
+
+
+
 
 "\n"	{
 	//printf("Salto de linea\n");	
