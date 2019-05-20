@@ -1,35 +1,33 @@
 %{
-	#include <stdio.h>
-	#include <stdlib.h>	
-	#include <math.h>
-	#include "auxiliares.h"
-	#include "Tabla_simbolos.h"
+#include <stdio.h>
+#include <math.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include "auxiliares.h"
+#include "Tabla_simbolos.h"
 %}
 
 /*Declaraciones de Bison*/
 %union{
 	struct table* Tabla_S;
 	int entero;
-	float flotante;
+	double flotante;
 	char* cadena;
 }
 
 %token <entero> ENTERO
-%token <flotante> RACIONAL
-%token <cadena> CADENA
-%token <cadena> VARIABLE
-%token IF
-%token INT
-%token FLOAT
-%token STRING
-%token POTENCIA
 %type <entero> exp_i
+%token <flotante> RACIONAL
 %type <flotante> exp_f
+%token <cadena> CADENA
 %type <cadena> exp_c
+%token <cadena> VARIABLE
+%token IF INT FLOAT STRING POTENCIA
 %type <Tabla_S> exp_Var
-
 %left '+' '-'
 %left '*' '/' 
+%left NEGATIVE
 %left POTENCIA '^'
 
 /* Gramaticas */
@@ -42,51 +40,11 @@ input:	/* Cadena vacia */
 line: '\n'
 
 	/** Manejo de constantes **/
-	| exp_i '\n' { printf("\tResultado: %d\n\n", $1); }
-	| exp_f '\n' { printf("\tResultado: %.4g\n\n", $1); }
-	| exp_c '\n' { printf("\tResultado: %s\n\n", $1); }
-	| exp_Var '\n'
-	{
-		table* aux = $1;
-		if(aux != NULL)
-		{
-			switch(aux->tipo)
-			{
-				case 0:
-					printf("\tResultado: %d\n",aux->valor.e);
-				break;
-				case 1:
-					printf("\tResultado: %.4g\n",aux->valor.f);
-				break;
-				case 2:
-					printf("\tResultado: %s\n",aux->valor.s);
-				break;
-			}
-		}
-		else
-			printf("\t\e[35mOperacion no valida\e[0m\n");
-	}
-	//| exp_Var '\n' { printf("\tResultado: %.4g\n\n", $1); }
-	
-	/** Manejo de variables **/
-		/** Manejo de variables enteras **/
-	|VARIABLE ';'
-	{
-		char* temp = lexema_aux($1);
-		table* aux =  get_nodo(temp);
-		if(aux != NULL)
-		{
-			if(aux->tipo == 0)
-				printf("\tResultado: %s = %d\n",aux->lexema,aux->valor.e);
-			else if(aux->tipo == 1)
-				printf("\tResultado: %s = %f\n",aux->lexema,aux->valor.f);
-			else
-				printf("\tResultado: %s = %s\n",aux->lexema,aux->valor.s);
-
-		}
-		else
-			printf("\t\e[35mVariable no declarada\e[0m\n");
-	}
+	| exp_i '\n' 	{ printf("\tResultado: %d\n\n", $1); }
+	| exp_f '\n' 	{ printf("\tResultado: %.4g\n\n", $1); }
+	| exp_c '\n' 	{ printf("\tResultado: %s\n\n", $1); }
+	| exp_Var '\n'	{ buscar($1);}
+	| exp_Var ';' '\n'	{ buscar($1);}
 	| INT VARIABLE ';'
 	{
 		char* temp = lexema_aux($2);

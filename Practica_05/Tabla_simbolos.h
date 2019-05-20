@@ -211,3 +211,26 @@ table* operacion(table* variable,float num,int orden,int operacion)
 	}
 	return aux;
 }
+
+
+void buscar(struct table* numero){
+	table* aux = numero;
+		if(aux != NULL)
+		{
+			switch(aux->tipo)
+			{
+				case 0:
+					printf("\tResultado: %d\n",aux->valor.e);
+				break;
+				case 1:
+					printf("\tResultado: %.8g\n",aux->valor.f);
+				break;
+				case 2:
+					printf("\tResultado: %s\n",aux->valor.s);
+				break;
+			}
+		}
+		else
+			printf("\t\e[35mOperacion no valida\e[0m\n");
+
+			}
