@@ -18,7 +18,7 @@ extern int yylex(void);
 }
 %token <entero> ENTERO
 %type <entero> exp term
-%token <flotante> FLOTANTE
+%token <flotante> RACIONAL
 %type <flotante> expf termf
 %token <string> CADENA
 %type <string> exp_str
@@ -99,7 +99,7 @@ expf:  termf					{ $$ = $1;         	}
 // puedan ser distinguidos correctamente y cosas como pow() funcionen
 //-----------------------------------------------------------------------------------------
 
-termf:     FLOTANTE				{ $$ = $1;         	}
+termf:     RACIONAL				{ $$ = $1;         	}
     |     '(' expf ')'				{ $$ = $2;         	}
     ;
 
