@@ -1,46 +1,5 @@
-int a;
-a = 3;
-a = 1.2;
-a = "asdfa";
-int b = 10;
-b;
-b = 1;
-b = 2.3;
-b = "asdf";
-float c;
-c = 1;
-c = 1.2;
-c = "asdfa";
-float d = 3.3;
-d = 1;
-d = 1.2;
-d = "asdfa";
-float e = 10;
-e = 1;
-e = 1.2;
-e = "asdfa";
-string cadena_01= "Prueba";
-cadena_01="Hola";
-string cadena_02= " mundo ";
-(cadena_01+cadena_02)^3
-pow(cadena_01,10.3);
-string cadena_03;
-cadena_03^100
-PoW(3,4.3);
-
-1.2 + cadena_01 +10
-int a_01 = 10;
-int a_02 = 5;
-a_02 +a_01
-a_02 -a_01
-a_02 *a_01
-a_02 /a_01
-a_02 ^a_01
-pow(a_02,a_01);
-a_02 +1
-a_02 -1
-a_02 *1
-a_02 /1
-a_02 ^1.2
-10+10
-a + e;
+int a= 10;
+int b= 5;
+int c ;
+c= a+b;
+c;

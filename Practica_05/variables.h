@@ -460,3 +460,74 @@ struct table* pow_var_s(struct table *var_1, char * var_2){
 			}
 			return aux;
 }
+
+
+void print_var_lit(char* variable)
+{
+		char* temp = lexema_aux(variable);
+		table* aux =  get_nodo(temp);
+		if(aux != NULL)
+		{
+			if(aux->tipo == 0)
+				printf("\tResultado: %s = %d\n",aux->lexema,aux->valor.e);
+			else if(aux->tipo == 1)
+				printf("\tResultado: %s = %f\n",aux->lexema,aux->valor.f);
+			else
+				printf("\tResultado: %s = %s\n",aux->lexema,aux->valor.s);
+
+		}
+		else
+			printf("\t\e[35mVariable no declarada\e[0m\n");
+	}
+
+
+void asign_val(char *variable, struct table * resultado)
+		{
+		char* temp = lexema_aux(variable);
+		table* aux =  get_nodo(temp);
+		if(aux != NULL)
+		{
+			if(aux->tipo == 2)
+			{
+				if(resultado->tipo == 2)
+				{
+					aux->valor.s = resultado->valor.s;
+					printf("\tResultado: %s\n", aux->valor.s);
+				}
+				else
+					printf("\t\e[35mTipos no compatibles\e[0m\n");
+			}
+			else if(aux->tipo == 0)
+			{
+				if(resultado->tipo == 0)
+				{
+					aux->valor.e = resultado->valor.e;
+					printf("\tResultado: %d\n", aux->valor.e);
+				}
+				else if (resultado->tipo == 1)
+				{
+					aux->valor.e = resultado->valor.f;
+					printf("\tResultado: %d\n", aux->valor.e);
+				}
+				else
+					printf("\t\e[35mTipos no compatibles\e[0m\n");
+			}
+			else
+			{
+				if(resultado->tipo == 0)
+				{
+					aux->valor.f = resultado->valor.e;
+					printf("\tResultado: %d\n", aux->valor.f);
+				}
+				else if (resultado->tipo == 1)
+				{
+					aux->valor.f = resultado->valor.f;
+					printf("\tResultado: %.5g\n", aux->valor.f);
+				}
+				else
+					printf("\t\e[35mTipos no compatibles\e[0m\n");
+			}
+		}
+		else
+			printf("\t\e[35mVariable no declarada\e[0m\n");
+	}
