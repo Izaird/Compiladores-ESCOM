@@ -1,47 +1,5 @@
-	Resultado: a = 0
-	Resultado: a = 3
-	[35mTipo de dato incompatible[0m
-	[35mTipo de dato incompatible[0m
-	Resultado: b = 10
-	Resultado: 10
-	Resultado: b = 1
-	[35mTipo de dato incompatible[0m
-	[35mTipo de dato incompatible[0m
+	Resultado: a = 10
+	Resultado: b = 5
 	Resultado: c = 0
-	Resultado: c = 1
-	Resultado: c = 1.200000
-	[35mTipo de dato incompatible[0m
-	Resultado: d = 3.3
-	Resultado: d = 1
-	Resultado: d = 1.200000
-	[35mTipo de dato incompatible[0m
-	Resultado: e = 10
-	Resultado: e = 1
-	Resultado: e = 1.200000
-	[35mTipo de dato incompatible[0m
-	Resultado: cadena_01 = Prueba
-	Resultado: cadena_01 = Hola
-	Resultado: cadena_02 =  mundo 
-	Resultado: Hola mundo Hola mundo Hola mundo 
-
-	[35mOperacion no valida[0m
-	Resultado: cadena_03
-	Resultado: 
-	Resultado: 112.62152
-
-	Resultado: 1.2Hola10
-	Resultado: a_01 = 10
-	Resultado: a_02 = 5
 	Resultado: 15
-	Resultado: -5
-	Resultado: 50
-	Resultado: 0.5
-	Resultado: 9765625
-	Resultado: 9765625
-	Resultado: 6
-	Resultado: 4
-	Resultado: 5
-	Resultado: 5
-	Resultado: 6.8986487
-	Resultado: 20
-
+	Resultado: c = 15
