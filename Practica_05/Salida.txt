@@ -1,5 +1,28 @@
-	Resultado: a = 10
-	Resultado: b = 5
-	Resultado: c = 0
-	Resultado: 15
-	Resultado: c = 15
+Declaracion entera
+Variable: r1
+Signo: =
+Numero entero 5
+Signo: ;
+	Resultado: r1 = 5
+Salto de linea
+Declaracion entera
+Variable: r2
+Signo: =
+Numero entero 10
+Signo: ;
+	Resultado: r2 = 10
+Salto de linea
+Declaracion entera
+Variable: r3
+Signo: ;
+	Resultado: r3 = 0
+Salto de linea
+Variable: r3
+Signo: =
+Variable: r1
+Signo: +
+Variable: r2
+Signo: +
+Numero entero 5
+Signo: ;
+	Resultado: 20

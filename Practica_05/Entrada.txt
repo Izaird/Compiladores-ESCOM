@@ -1,5 +1,4 @@
-int a= 10;
-int b= 5;
-int c ;
-c= a+b;
-c;
+int r1 = 5;
+int r2 = 10;
+int r3;
+r3 = r1+r2 + 5;

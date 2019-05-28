@@ -61,12 +61,48 @@ char* lexema_aux (char* lex){
 
 // Potencia de cadenas
 char* pow_s(char* cadena,int potencia){
-	char* aux = (char*)malloc(sizeof(char)*1);
-	aux[0] = '\n';
-	int i;
-	for(i = 0; i < potencia; i ++)
-			aux = conca(cadena,aux);
-	return aux;
+	if (potencia>= 0){
+		char* aux = (char*)malloc(sizeof(char)*1);
+		aux[0] = '\n';
+		int i;
+		for(i = 0; i < potencia; i ++)
+		aux = conca(cadena,aux);
+		return aux;
+	}
+	else{
+		int l, i; 
+		potencia *= -1;
+    	char *begin_ptr, *end_ptr, ch; 
+	
+    	// Obtiene el tamaño del cadenaing
+    	l = strlen(cadena); 
+	
+
+    	begin_ptr = cadena; 
+    	end_ptr = cadena; 
+	
+    	// Se mueve end_ptr al ultimo caracter 
+    	for (i = 0; i < l - 1; i++) 
+    	    end_ptr++; 
+	
+    	// Cambia el caracter del inicio al final
+    	for (i = 0; i < l / 2; i++) { 
+		
+    	    // Cambio de caracter 
+    	    ch = *end_ptr; 
+    	    *end_ptr = *begin_ptr; 
+    	    *begin_ptr = ch; 
+	
+    	    // Se actualizan los apuntadores 
+    	    begin_ptr++; 
+    	    end_ptr--; 
+    	}
+		char* aux = (char*)malloc(sizeof(char)*1);
+		aux[0] = '\n';
+		for(i = 0; i < potencia; i ++)
+		aux = conca(cadena,aux);
+		return aux; 
+	}
 }
 
 //Concatenacion de cadenas con enteros
@@ -88,3 +124,38 @@ char* conca_f(char* cadena, double racional){
 	aux= conca(cadena,num);
 	return aux;
 }
+
+//Invierte cadena
+char* reverse_s(char* cadena) 
+{ 
+    int l, i; 
+    char *begin_ptr, *end_ptr, ch; 
+  
+    // Obtiene el tamaño del cadenaing
+    l = strlen(cadena); 
+  
+    // Set the begin_ptr and end_ptr 
+    // initially to start of cadenaing 
+    begin_ptr = cadena; 
+    end_ptr = cadena; 
+  
+    // Move the end_ptr to the last character 
+    for (i = 0; i < l - 1; i++) 
+        end_ptr++; 
+  
+    // Swap the char from start and end 
+    // index using begin_ptr and end_ptr 
+    for (i = 0; i < l / 2; i++) { 
+  
+        // swap character 
+        ch = *end_ptr; 
+        *end_ptr = *begin_ptr; 
+        *begin_ptr = ch; 
+  
+        // update pointers positions 
+        begin_ptr++; 
+        end_ptr--; 
+    } 
+	return cadena;
+} 
+  
