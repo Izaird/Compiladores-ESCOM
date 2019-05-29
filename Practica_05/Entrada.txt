@@ -1,4 +1,8 @@
-int r1 = 5;
-int r2 = 10;
-int r3;
-r3 = r1+r2 + 5;
+string a = "HOLA";
+string b = "ADIOS";
+int d;
+if (a>b);
+if (a<b);
+if (f<c);
+if (a<d);
+

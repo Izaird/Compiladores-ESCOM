@@ -25,13 +25,13 @@ variable [A-Za-z_]+[0-9a-zA-Z_]*
 
 
 {numero}                   {
-                            printf("Numero entero %s\n",yytext);
+                            // printf("Numero entero %s\n",yytext);
                             yylval.entero = atoi(yytext);
                             return (ENTERO);
                         }
 
 ({numero})(".")({numero})    {
-                            printf("Numero flotante %s\n",yytext);
+                            // printf("Numero flotante %s\n",yytext);
                             yylval.flotante = strtod(yytext, NULL);
                             return (RACIONAL);
                         }
@@ -48,45 +48,45 @@ variable [A-Za-z_]+[0-9a-zA-Z_]*
                                 yytext++;
                             }
                             *str = '\0';
-                            printf("Cadena: %s\n", yylval.cadena);
+                            // printf("Cadena: %s\n", yylval.cadena);
                             return(CADENA);
                         }
 
 {potencia} 	{
-	printf("Potencia\n");
+	// printf("Potencia\n");
 	return (POW);
 	}
 
 {if} 	{
-	printf("Comparacion\n");
+	// printf("Comparacion\n");
 	return (IF);
 	}
 
 
 {int} 	{
-	printf("Declaracion entera\n");
+	// printf("Declaracion entera\n");
 	return (INT);
 	}
 
 {float} 	{
-	printf("Declaracion flotante\n");
+	// printf("Declaracion flotante\n");
 	return (FLOAT);
 	}
 
 {string} 	{
-	printf("Declaracion string\n");
+	// printf("Declaracion string\n");
 	return (STRING);
 	}
 
 
 {variable}	{
-	printf("Variable: %s\n",yytext);
+	// printf("Variable: %s\n",yytext);
 	yylval.cadena = yytext;
 	return(VARIABLE);
 	}
                         
 "+"|"-"|"/"|"*"|"^"|"("|")"|"="|"<"|">"|","|";"	 	{
-		                    printf("Signo: %s\n",yytext);
+		                    // printf("Signo: %s\n",yytext);
                             return (yytext[0]);
                 }
 
@@ -96,7 +96,7 @@ variable [A-Za-z_]+[0-9a-zA-Z_]*
 
 
 "\n"	{
-	printf("Salto de linea\n");	
+	// printf("Salto de linea\n");	
 	return (yytext[0]);
 	}
 

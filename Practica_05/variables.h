@@ -1,4 +1,4 @@
-// Imprime variable
+// Imprime variable tipo expresion variable
 void print_var(struct table* numero){
 	table* aux = numero;
 		if(aux != NULL)
@@ -17,8 +17,26 @@ void print_var(struct table* numero){
 			}
 		}
 		else
-			printf("\t\e[35mOperacion no valida\e[0m\n");
+			printf("\t\e[31mOperacion no valida\e[0m\n");
 
+}
+
+// Imprime variable previamente declarada 
+void print_var_lit(char* variable){
+		char* temp = lexema_aux(variable);
+		table* aux =  get_nodo(temp);
+		if(aux != NULL)
+		{
+			if(aux->tipo == 0)
+				printf("\tResultado: %s = %d\n",aux->lexema,aux->valor.e);
+			else if(aux->tipo == 1)
+				printf("\tResultado: %s = %f\n",aux->lexema,aux->valor.f);
+			else
+				printf("\tResultado: %s = %s\n",aux->lexema,aux->valor.s);
+
+		}
+		else
+			printf("\t\e[31mVariable no declarada\e[0m\n");
 }
 
 // Declaracion de una variable numerica
@@ -28,7 +46,7 @@ void declaration_var(char* variable, double valor, int tipo_var){
 		char* temp = lexema_aux(variable);
 		val.e = valor_int;
 		if(add(temp,0,val) == false)
-			printf("\t\e[35mVariable previamente declarada\e[0m\n");
+			printf("\t\e[31mVariable previamente declarada\e[0m\n");
 		else
 			printf("\tResultado: %s = %d\n",temp,valor_int);
 	}
@@ -37,13 +55,36 @@ void declaration_var(char* variable, double valor, int tipo_var){
 		char* temp =  lexema_aux(variable);
 		val.f = valor;
 		if(add(temp,1,val) == false)
-			printf("\t\e[35mVariable previamente declarada\e[0m\n");
+			printf("\t\e[31mVariable previamente declarada\e[0m\n");
 		else
 			printf("\tResultado: %s = %g\n",temp,valor);
 	}
 }
 
-// Cambio del valor de la variable, tiene que estar previamente declarada
+// Declaracion de una variable tipo string
+void declaration_var_s(char* variable, char* valor){
+	if (valor==0){
+		char* temp = lexema_aux(variable);
+		char* cad = (char*)malloc(1);
+		cad[0] = '\0';
+		val.s = cad;
+		if(add(temp,2,val) == false)
+			printf("\t\e[31mVariable previamente declarada\e[0m\n");
+		else
+			printf("\tResultado: %s\n",temp);
+	}
+	else{
+		char* temp = lexema_aux(variable);
+		val.s = valor;
+		if(add(temp,2,val) == false)
+			printf("\t\e[31mVariable previamente declarada\e[0m\n");
+		else
+			printf("\tResultado: %s = %s\n",temp,valor);
+	}
+}
+
+
+// Cambio del valor de la variable tipo real(int, float)
 void change_val(char* variable, double valor,int tipo_val){
 	int valor_int =(int)valor;
 	if (tipo_val == 0){
@@ -65,7 +106,7 @@ void change_val(char* variable, double valor,int tipo_val){
 			}
 		}
 		else
-			printf("\t\e[35mVariable no declarada\e[0m\n");
+			printf("\t\e[31mVariable no declarada\e[0m\n");
 	}
 	else{
 		char* temp = lexema_aux(variable);
@@ -80,33 +121,11 @@ void change_val(char* variable, double valor,int tipo_val){
 			}
 			else
 			{	
-				printf("\t\e[35mTipo de dato incompatible\e[0m\n");
+				printf("\t\e[31mTipo de dato incompatible\e[0m\n");
 			}
 		}
 		else
-			printf("\t\e[35mVariable no declarada\e[0m\n");
-	}
-}
-
-// Declaracion de una variable tipo string
-void declaration_var_s(char* variable, char* valor){
-	if (valor==0){
-		char* temp = lexema_aux(variable);
-		char* cad = (char*)malloc(1);
-		cad[0] = '\0';
-		val.s = cad;
-		if(add(temp,2,val) == false)
-			printf("\t\e[35mVariable previamente declarada\e[0m\n");
-		else
-			printf("\tResultado: %s\n",temp);
-	}
-	else{
-		char* temp = lexema_aux(variable);
-		val.s = valor;
-		if(add(temp,2,val) == false)
-			printf("\t\e[35mVariable previamente declarada\e[0m\n");
-		else
-			printf("\tResultado: %s = %s\n",temp,valor);
+			printf("\t\e[31mVariable no declarada\e[0m\n");
 	}
 }
 
@@ -123,10 +142,10 @@ void change_val_s(char* variable, char* valor){
 				printf("\tResultado: %s = %s\n",temp,aux->valor.s);
 			}
 			else
-				printf("\t\e[35mTipo de dato incompatible\e[0m\n");
+				printf("\t\e[31mTipo de dato incompatible\e[0m\n");
 		}
 		else
-			printf("\t\e[35mVariable no declarada\e[0m\n");
+			printf("\t\e[31mVariable no declarada\e[0m\n");
 }
 
 // Suma dos variables
@@ -207,7 +226,7 @@ struct table* div_var(struct table *var_1, struct table* var_2){
 			return aux;
 }
 
-// La primera variable es la base y la segunda la potencia 
+// Potencia de variables, la primera variable es la base y la segunda la potencia 
 struct table* pow_var(struct table *var_1, struct table* var_2){
     			table* aux = NULL;
 			if(var_1 != NULL && var_2 != NULL)
@@ -304,7 +323,7 @@ table* operacion(table* variable,float num,int orden,int operacion){
 	return aux;
 }
 
-// Realiza una adicion de una variable y un entero
+// Realiza una suma de una variable y un entero
 struct table* add_var_i(struct table *var_1, int var_2,int orden){
 	table* aux = NULL;
 	if(var_1 != NULL)
@@ -326,7 +345,7 @@ struct table* add_var_i(struct table *var_1, int var_2,int orden){
 	return aux;	
 }
 
-// Realiza una adicion de una variable y un recional
+// Realiza una variable de una variable y un recional
 struct table* add_var_f(struct table *var_1, float var_2,int orden){
 	if (orden==0){
 		table* aux = NULL;
@@ -373,7 +392,7 @@ struct table* add_var_f(struct table *var_1, float var_2,int orden){
 
 }
 
-// Potencia de una variable con una integral
+// Potencia de una variable con una entero
 struct table* pow_var_i(struct table *var_1, int var_2,int orden){
 	if(orden ==0){
 			table* aux = NULL;
@@ -421,7 +440,7 @@ struct table* pow_var_i(struct table *var_1, int var_2,int orden){
 	
 }
 
-// SUma una variable con una cadena
+// Suma una variable con una cadena
 struct table* add_var_s(struct table *var_1, char * var_2){
 			table* aux = NULL;
 			if(var_1 != NULL)
@@ -461,28 +480,17 @@ struct table* pow_var_s(struct table *var_1, char * var_2){
 			return aux;
 }
 
+//Retorna el nodo de la variable 
+struct table * var_to_expvar(char * variable){
+	char* nombre = lexema_aux(variable);
+	table* aux = get_nodo(nombre);
+	if(aux == NULL)
+		printf("\t\e[31mVariable '%s' no declarada\e[0m\n",nombre);
+	return aux;	
+}
 
-void print_var_lit(char* variable)
-{
-		char* temp = lexema_aux(variable);
-		table* aux =  get_nodo(temp);
-		if(aux != NULL)
-		{
-			if(aux->tipo == 0)
-				printf("\tResultado: %s = %d\n",aux->lexema,aux->valor.e);
-			else if(aux->tipo == 1)
-				printf("\tResultado: %s = %f\n",aux->lexema,aux->valor.f);
-			else
-				printf("\tResultado: %s = %s\n",aux->lexema,aux->valor.s);
-
-		}
-		else
-			printf("\t\e[35mVariable no declarada\e[0m\n");
-	}
-
-
-void asign_val(char *variable, struct table * resultado)
-		{
+//Asigna el valor de exp_var a una variable 
+void asign_val(char *variable, struct table * resultado){
 		char* temp = lexema_aux(variable);
 		table* aux =  get_nodo(temp);
 		if(aux != NULL)
@@ -495,7 +503,7 @@ void asign_val(char *variable, struct table * resultado)
 					printf("\tResultado: %s\n", aux->valor.s);
 				}
 				else
-					printf("\t\e[35mTipos no compatibles\e[0m\n");
+					printf("\t\e[31mTipos no compatibles\e[0m\n");
 			}
 			else if(aux->tipo == 0)
 			{
@@ -510,7 +518,7 @@ void asign_val(char *variable, struct table * resultado)
 					printf("\tResultado: %d\n", aux->valor.e);
 				}
 				else
-					printf("\t\e[35mTipos no compatibles\e[0m\n");
+					printf("\t\e[31mTipos no compatibles\e[0m\n");
 			}
 			else
 			{
@@ -525,9 +533,31 @@ void asign_val(char *variable, struct table * resultado)
 					printf("\tResultado: %.5g\n", aux->valor.f);
 				}
 				else
-					printf("\t\e[35mTipos no compatibles\e[0m\n");
+					printf("\t\e[31mTipos no compatibles\e[0m\n");
 			}
 		}
 		else
-			printf("\t\e[35mVariable no declarada\e[0m\n");
+			printf("\t\e[31mVariable no declarada\e[0m\n");
+}
+
+// Compara dos variables de cualquier tipo, la unica condicion para que se ejecute
+// es que sean de tipos compatibles
+void var_comp(struct table *var_01,struct table *var_02){
+	if (var_01!= NULL && var_02 != NULL){
+		if(var_01->tipo!=2 || var_02->tipo!=2 ){
+			printf("\t\e[31mTipos no compatibles\e[0m\n");
+		}
+		else{
+			int a = size(var_01->valor.s);
+			int b = size(var_02->valor.s);
+			if (a>b){
+				printf("\tTRUE\n");
+			}
+			else{
+				printf("\tFALSE\n");
+			}
+		}
 	}
+
+}
+

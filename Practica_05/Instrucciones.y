@@ -92,6 +92,8 @@ line: '\n'
 | IF '(' exp_i '<' exp_f ')' ';' '\n' { ($3 < $5)?	printf("\tTRUE\n\n") : printf("\tFALSE\n\n");}
 | IF '(' exp_f '>' exp_f ')' ';' '\n' { ($3 > $5)?	printf("\tTRUE\n\n") : printf("\tFALSE\n\n");}
 | IF '(' exp_f '<' exp_f ')' ';' '\n' { ($3 < $5)?	printf("\tTRUE\n\n") : printf("\tFALSE\n\n");}
+| IF '(' exp_Var '>' exp_Var ')' ';' '\n' {var_comp($3,$5);}
+| IF '(' exp_Var '<' exp_Var ')' ';' '\n'	{var_comp($5,$3);}
 ;
 
 //-----------------------------------------------------------------------------------------
@@ -158,16 +160,10 @@ exp_c: CADENA {	$$ = $1; }
 | exp_f '+' exp_c						{ $$ = conca_f($3,$1);}
 ;
 
+//Guardamos el nodo 
+exp_Var: VARIABLE						{$$ =var_to_expvar($1);}
 
-exp_Var: VARIABLE
-{
-			char* nombre = lexema_aux($1);
-			table* aux = get_nodo(nombre);
-			if(aux == NULL)
-				printf("\t\e[35mVariable '%s' no declarada\e[0m\n",nombre);
-			$$ = aux;	
-		}
-		| '(' exp_Var ')'				{ $$ = $2;	}
+| '(' exp_Var ')'				{ $$ = $2;	}
 
 //-----------------------------------------------------------------------------------------
 //Expresiones con variables
