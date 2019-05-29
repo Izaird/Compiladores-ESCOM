@@ -26,7 +26,7 @@
 %token <cadena> CADENA
 %type <cadena> exp_c
 %token <cadena> VARIABLE
-%token IF INT FLOAT STRING POW
+%token IF INT FLOAT STRING POW TABLA
 %type <Tabla_S> exp_Var
 %left '+' '-'
 %left '*' '/' 
@@ -94,6 +94,7 @@ line: '\n'
 | IF '(' exp_f '<' exp_f ')' ';' '\n' { ($3 < $5)?	printf("\tTRUE\n\n") : printf("\tFALSE\n\n");}
 | IF '(' exp_Var '>' exp_Var ')' ';' '\n' {var_comp($3,$5);}
 | IF '(' exp_Var '<' exp_Var ')' ';' '\n'	{var_comp($5,$3);}
+| TABLA			'\n'	{mostrar();}
 ;
 
 //-----------------------------------------------------------------------------------------

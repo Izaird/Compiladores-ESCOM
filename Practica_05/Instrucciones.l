@@ -17,7 +17,7 @@ int [Ii][Nn][Tt]
 float [Ff][Ll][Oo][Aa][Tt]
 string [Ss][Tt][Rr][Ii][Nn][Gg]
 variable [A-Za-z_]+[0-9a-zA-Z_]*
-
+tabla [t][@][b]
 
 %%
 
@@ -84,7 +84,12 @@ variable [A-Za-z_]+[0-9a-zA-Z_]*
 	yylval.cadena = yytext;
 	return(VARIABLE);
 	}
-                        
+
+{tabla}	{
+	// printf("Variable: %s\n",yytext);
+	return(TABLA);
+	}
+                            
 "+"|"-"|"/"|"*"|"^"|"("|")"|"="|"<"|">"|","|";"	 	{
 		                    // printf("Signo: %s\n",yytext);
                             return (yytext[0]);

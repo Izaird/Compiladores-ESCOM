@@ -24,25 +24,21 @@ table* get_nodo(char* lexema)
 {
 	int i;
 	table *aux = primero;
-	do
-	{
+	while(aux != NULL){
 		if(comparation(aux->lexema,lexema))
 			return aux;
 		aux = aux->siguiente;
 		i++;
-	}while(aux != NULL);	
+	}	
 	return aux;
 }
 
-/**Regresa el id de un lexema**/
-int get_id(char* lexema)
-{
+// Retorna el ID de un lexema 
+int get_id(char* lexema){
 	int i = 0;
-	if(primero != NULL)
-	{
+	if(primero != NULL){
 		table *aux = primero;
-		do
-		{
+		do{
 			if(comparation(aux->lexema,lexema))
 				return i;
 			aux = aux->siguiente;
@@ -53,9 +49,8 @@ int get_id(char* lexema)
 	return -2;
 }
 
-/**Agrega elemento a la tabla de simbolos**/
-int add(char* lexema,int tipo,union Data val_entrada)
-{
+// Agrega el elemento a la tabla de simbolos 
+int add(char* lexema,int tipo,union Data val_entrada){
 	int i = get_id(lexema);
 	if(i == -1 || i == -2)
 	{
@@ -86,7 +81,7 @@ int add(char* lexema,int tipo,union Data val_entrada)
 
 }
 
-/**Regresa el lexema de un id**/
+// Retorna el lexema de un ID
 char* get_lex(int id)
 {
 	int i;
@@ -100,7 +95,7 @@ char* get_lex(int id)
 	return lexema;
 }
 
-
+// Muestra la tabla de simbolos se puede ver en cualquier momento con el comando t@b
 void mostrar()
 {
 	table *aux = primero;
@@ -115,6 +110,9 @@ void mostrar()
 			break;
 			case 1:
 				printf("float   %g\n",aux->valor.f);
+			break;
+			case 2:
+				printf("string   %g\n",aux->valor.s);
 			break;
 			default:
 				printf("Desconocido\n");
