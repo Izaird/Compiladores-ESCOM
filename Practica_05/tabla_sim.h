@@ -59,15 +59,13 @@ int add(char* lexema,int tipo,union Data val_entrada){
 		nodo->tipo = tipo;
 		nodo->valor = val_entrada;
 		
-		if(primero == NULL)
-		{
+		if(primero == NULL){
 			nodo->id = 0;
 			nodo->anterior = NULL;
 			primero = nodo;
 			ultimo = nodo;
 		}
-		else
-		{
+		else{
 			nodo->id = ultimo->id + 1;
 			ultimo->siguiente = nodo;
 			nodo->anterior = ultimo;
@@ -82,13 +80,10 @@ int add(char* lexema,int tipo,union Data val_entrada){
 }
 
 // Retorna el lexema de un ID
-char* get_lex(int id)
-{
-	int i;
+char* get_lex(int id){
 	char *lexema = (char*)malloc(sizeof(char)*100);
 	table *aux = primero;
-	for(i = 0; i <= id; i++)
-	{
+	for(int i = 0; i <= id; i++){
 		lexema = aux->lexema;
 		aux = aux->siguiente;
 	}
@@ -99,24 +94,21 @@ char* get_lex(int id)
 void mostrar()
 {
 	table *aux = primero;
-	while(aux != NULL)
-	{	
-
+	while(aux != NULL){	
 		printf(" %d  %s    ",aux->id,aux->lexema);
-		switch(aux->tipo)
-		{
+		switch(aux->tipo){
 			case 0:
 				printf("int   %d\n",aux->valor.e);
-			break;
+				break;
 			case 1:
 				printf("float   %g\n",aux->valor.f);
-			break;
+				break;
 			case 2:
 				printf("string   %g\n",aux->valor.s);
-			break;
+				break;
 			default:
 				printf("Desconocido\n");
-			break;
+				break;
 		}
 		aux = aux->siguiente;
 	}
@@ -125,14 +117,13 @@ void mostrar()
 //Obtiene el valor de un flotante 
 float val_flot(table* a){
 	float aux = 0;
-	switch(a->tipo)
-	{
+	switch(a->tipo){
 		case 0:
 			aux = a->valor.e;
-		break;
+			break;
 		case 1:
 			aux = a->valor.f;
-		break;
+			break;
 	}
 	return aux;
 }
