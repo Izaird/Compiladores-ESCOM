@@ -37,7 +37,7 @@ def get_linea(inicial,cadena):
 		i += 1
 	return cadena[inicial:i]
 
-f = open('Archivo.txt','r')
+f = open('input','r')
 contenido = f.read()
 
 i = 0
